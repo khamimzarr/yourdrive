@@ -14,9 +14,10 @@
   --color-hairline: #e5e5e5;
   --color-dusk-violet: #6b62f2;
 
-  /* Typography */
-  --font-dm-sans: 'DM Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-geist: 'Geist', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  /* Typography — Families (CSS variable references) */
+  --font-display: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
 
   /* Typography — Scale */
   --text-caption: 13px;
@@ -70,18 +71,54 @@
 
   /* Shadows */
   --shadow-subtle: rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+  --shadow-nav: rgba(255, 255, 255, 0.02) 0px 3px 4.5px, rgba(0, 0, 0, 0.04) 0px 10px 8px, rgba(0, 0, 0, 0.1) 0px 4px 3px;
 }
 
+/* Base */
 body {
   background-color: var(--color-void-canvas);
   color: var(--color-bone);
-  font-family: var(--font-dm-sans);
+  font-family: var(--font-display);
 }
 
+/* Hero gradient — warm amber/coral → cobalt blue, subtle & atmospheric */
 .bg-hero-horizon {
-  background: linear-gradient(90deg, #ff7f50 0%, #0047ab 100%);
+  background: linear-gradient(
+    105deg,
+    #1a0e08 0%,
+    #2d1810 15%,
+    #4a2218 30%,
+    #1a1535 60%,
+    #0d1a3a 80%,
+    #0a0a0a 100%
+  );
 }
 
+/* Dusk violet wash — single chromatic accent strip */
 .bg-dusk-violet-wash {
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0) 40%, rgba(107, 98, 242, 0.565) 50%, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0));
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 0) 40%,
+    rgba(107, 98, 242, 0.565) 50%,
+    rgba(0, 0, 0, 0) 60%,
+    rgba(0, 0, 0, 0)
+  );
+}
+
+/* Frosted glass surface */
+.frosted-card {
+  background: rgba(212, 212, 212, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(229, 229, 229, 0.08);
+  border-radius: 24px;
+}
+
+/* Floating nav glass */
+.nav-glass {
+  background: rgba(22, 22, 22, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(229, 229, 229, 0.12);
 }
