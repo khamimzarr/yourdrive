@@ -130,6 +130,7 @@ export default function Dashboard() {
       alert('Download failed');
     }
   };
+  const breadcrumbParts = currentPath.split('/').filter(Boolean);
 
   return (
     <div className="h-screen w-full bg-[#050505] text-[#ededed] font-display flex overflow-hidden relative">
