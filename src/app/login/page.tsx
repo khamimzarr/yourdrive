@@ -31,8 +31,12 @@ export default function LoginPage() {
           {
             qrCode: async (qr) => {
               const tokenBuffer = qr.token;
-              // Base64url encode the token
-              const base64Token = Buffer.from(tokenBuffer).toString('base64url');
+              // Base64url encode the token (using manual replace for browser compat)
+              const base64Token = Buffer.from(tokenBuffer)
+                .toString('base64')
+                .replace(/\+/g, '-')
+                .replace(/\//g, '_')
+                .replace(/=+$/, '');
               const tgUrl = `tg://login?token=${base64Token}`;
               const dataUrl = await QRCode.toDataURL(tgUrl, {
                 width: 300,
