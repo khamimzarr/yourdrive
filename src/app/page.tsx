@@ -11,14 +11,14 @@ export default function Home() {
         <span className="text-snow-white font-medium tracking-tight text-[15px]">YourDrive</span>
         <div className="flex items-center gap-2">
           <div className="hidden md:flex gap-1.5">
-            <button className="px-3.5 py-1.5 rounded-full-2 border border-hairline/15 text-snow-white/85 text-[14px] hover:bg-snow-white/5 transition-colors duration-200">
+            <button className="px-3.5 py-1.5 rounded-full-2 border border-hairline/15 text-snow-white/85 text-[14px] hover:bg-snow-white/5 hover:scale-105 active:scale-95 transition-all duration-300">
               Features
             </button>
-            <button className="px-3.5 py-1.5 rounded-full-2 border border-hairline/15 text-snow-white/85 text-[14px] hover:bg-snow-white/5 transition-colors duration-200">
+            <button className="px-3.5 py-1.5 rounded-full-2 border border-hairline/15 text-snow-white/85 text-[14px] hover:bg-snow-white/5 hover:scale-105 active:scale-95 transition-all duration-300">
               Privacy
             </button>
           </div>
-          <Link href="/login" className="bg-snow-white text-ink-black rounded-full-2 px-4 py-1.5 text-[14px] font-medium hover:bg-bone transition-colors duration-200 ml-2">
+          <Link href="/login" className="bg-snow-white text-ink-black rounded-full-2 px-4 py-1.5 text-[14px] font-medium hover:bg-bone hover:scale-105 active:scale-95 transition-all duration-300 ml-2 shadow-lg shadow-white/10">
             Connect Telegram
           </Link>
         </div>
@@ -41,14 +41,14 @@ export default function Home() {
             </h1>
             
             <p className="text-[18px] text-ash leading-relaxed max-w-[420px]">
-              Private, unlimited storage using your own Telegram account. No servers. No middleman.
+              Unlimited, serverless cloud storage powered by your Telegram account.
             </p>
 
             <div className="flex gap-3 items-center">
-              <Link href="/login" className="bg-snow-white text-ink-black rounded-full-2 px-6 py-3 text-[16px] font-medium hover:bg-bone transition-colors duration-200">
+              <Link href="/login" className="bg-snow-white text-ink-black rounded-full-2 px-6 py-3 text-[16px] font-medium hover:bg-bone hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl shadow-white/10">
                 Get Started
               </Link>
-              <button className="rounded-full-2 px-6 py-3 text-[16px] text-snow-white/80 border border-hairline/15 hover:bg-snow-white/5 transition-colors duration-200">
+              <button className="rounded-full-2 px-6 py-3 text-[16px] text-snow-white/80 border border-hairline/15 hover:bg-snow-white/5 hover:scale-105 active:scale-95 transition-all duration-300">
                 How it works
               </button>
             </div>
@@ -73,23 +73,23 @@ export default function Home() {
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-20">
           <div>
             <h2 className="text-[32px] font-heading font-semibold text-bone mb-4 leading-[1.2] tracking-tight">
-              How it works
+              Seamless Sync
             </h2>
             <p className="text-[18px] font-heading font-medium text-ash leading-relaxed">
-              Files go straight from your browser to Telegram. Nothing in between.
+              From your browser, straight to Telegram.
             </p>
           </div>
           
           <div className="flex flex-col">
             {[
-              'Login with your Telegram account',
-              'Upload files to your Saved Messages',
-              'Organize with virtual folders',
-              'Download or stream anytime',
-              'Sync across all your devices',
+              'Connect Telegram',
+              'Upload securely',
+              'Organize files',
+              'Access anywhere',
+              'Always in sync',
             ].map((item, i) => (
-              <div key={i} className="flex justify-between items-center py-5 border-b border-hairline/10">
-                <span className="text-[16px] text-bone">{item}</span>
+              <div key={i} className="flex justify-between items-center py-5 border-b border-hairline/10 hover:px-4 hover:bg-white/[0.02] transition-all duration-300 cursor-default rounded-lg">
+                <span className="text-[16px] text-bone transition-transform duration-300">{item}</span>
                 <span className="text-[16px] text-ash tabular-nums">{String(i + 1).padStart(2, '0')}</span>
               </div>
             ))}
@@ -98,28 +98,28 @@ export default function Home() {
 
         {/* Cards */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="frosted-card p-7">
+          <div className="frosted-card p-7 hover:-translate-y-2 hover:shadow-2xl hover:bg-white/[0.04] transition-all duration-500 cursor-default">
             <h3 className="text-[24px] font-heading font-medium text-bone mb-3 leading-tight">100% Private</h3>
             <p className="text-[16px] text-ash leading-relaxed">
-              No server sees your files. Everything runs client-side in your browser via MTProto.
+              Client-side encrypted. Nobody but you can access your files.
             </p>
           </div>
-          <div className="frosted-card p-7">
-            <h3 className="text-[24px] font-heading font-medium text-bone mb-3 leading-tight">Truly Unlimited</h3>
+          <div className="frosted-card p-7 hover:-translate-y-2 hover:shadow-2xl hover:bg-white/[0.04] transition-all duration-500 cursor-default">
+            <h3 className="text-[24px] font-heading font-medium text-bone mb-3 leading-tight">Unlimited</h3>
             <p className="text-[16px] text-ash leading-relaxed">
-              Up to 2GB per file, no total cap. Powered by Telegram's free cloud infrastructure.
+              2GB per file. No total cap. Built on Telegram's infrastructure.
             </p>
           </div>
-          <div className="frosted-card p-7">
+          <div className="frosted-card p-7 hover:-translate-y-2 hover:shadow-2xl hover:bg-white/[0.04] transition-all duration-500 cursor-default">
             <h3 className="text-[24px] font-heading font-medium text-bone mb-3 leading-tight">Folder System</h3>
             <p className="text-[16px] text-ash leading-relaxed">
-              Organize your Saved Messages into folders and subfolders — just like a real drive.
+              Organize files and subfolders exactly like a real hard drive.
             </p>
           </div>
-          <div className="frosted-card p-7">
+          <div className="frosted-card p-7 hover:-translate-y-2 hover:shadow-2xl hover:bg-white/[0.04] transition-all duration-500 cursor-default">
             <h3 className="text-[24px] font-heading font-medium text-bone mb-3 leading-tight">For Everyone</h3>
             <p className="text-[16px] text-ash leading-relaxed">
-              Each family member logs in with their own Telegram. Personal clouds, zero config.
+              Login with any Telegram account for an instant personal cloud.
             </p>
           </div>
         </section>

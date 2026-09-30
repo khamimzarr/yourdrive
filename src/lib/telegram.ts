@@ -8,6 +8,32 @@ let client: TelegramClient | null = null;
 const apiId = parseInt(process.env.NEXT_PUBLIC_TELEGRAM_API_ID || "0", 10);
 const apiHash = process.env.NEXT_PUBLIC_TELEGRAM_API_HASH || "";
 
+class LocalStorageSession extends StringSession {
+  private key: string;
+  constructor(key: string) {
+    let saved = "";
+    if (typeof window !== "undefined") {
+      saved = localStorage.getItem(key) || "";
+    }
+    super(saved);
+    this.key = key;
+  }
+
+  setAuthKey(authKey?: any, dcId?: number) {
+    super.setAuthKey(authKey, dcId);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(this.key, this.save());
+    }
+  }
+
+  setDC(dcId: number, serverAddress: string, port: number) {
+    super.setDC(dcId, serverAddress, port);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(this.key, this.save());
+    }
+  }
+}
+
 export async function getClient(): Promise<TelegramClient> {
   if (client) {
     if (!client.connected) {
@@ -16,11 +42,7 @@ export async function getClient(): Promise<TelegramClient> {
     return client;
   }
 
-  let sessionString = "";
-  if (typeof window !== "undefined") {
-    sessionString = localStorage.getItem(SESSION_KEY) || "";
-  }
-  const session = new StringSession(sessionString);
+  const session = new LocalStorageSession(SESSION_KEY);
 
   client = new TelegramClient(session, apiId, apiHash, {
     connectionRetries: 5,
