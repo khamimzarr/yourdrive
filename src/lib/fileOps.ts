@@ -8,11 +8,13 @@ export interface VFSFile {
   size: number;
   date: number;
   mimeType?: string;
+  isTrash?: boolean;
+  rawMeta?: any;
 }
 
 const META_REGEX = /\[YourDrive-Meta:\s*(\{.*\})\s*\]/;
 
-export async function listFiles(folderPath: string): Promise<VFSFile[]> {
+export async function getAllFiles(): Promise<VFSFile[]> {
   const client = await getClient();
   const messages = await client.getMessages('me', { limit: 100 });
   const allFiles: VFSFile[] = [];
@@ -32,9 +34,12 @@ export async function listFiles(folderPath: string): Promise<VFSFile[]> {
     
     let path = '/';
     let name = 'Unknown File';
+    let isTrash = false;
+    
     if (meta) {
        path = meta.path || '/';
        name = meta.name || name;
+       isTrash = !!meta.trash;
     } else {
        if (msg.media instanceof Api.MessageMediaDocument && msg.media.document instanceof Api.Document) {
           for (const attr of msg.media.document.attributes) {
@@ -57,11 +62,45 @@ export async function listFiles(folderPath: string): Promise<VFSFile[]> {
       name,
       path,
       size,
-      date: msg.date
+      date: msg.date,
+      isTrash,
+      rawMeta: meta
     });
   }
   
-  return allFiles.filter(f => f.path === folderPath);
+  return allFiles;
+}
+
+export async function listFiles(folderPath: string): Promise<VFSFile[]> {
+  const all = await getAllFiles();
+  return all.filter(f => f.path === folderPath && !f.isTrash);
+}
+
+export async function listTrashFiles(): Promise<VFSFile[]> {
+  const all = await getAllFiles();
+  return all.filter(f => f.isTrash);
+}
+
+export async function listRecentFiles(): Promise<VFSFile[]> {
+  const all = await getAllFiles();
+  return all.filter(f => !f.isTrash && f.path !== '/.trash').sort((a, b) => b.date - a.date);
+}
+
+export async function moveToTrash(file: VFSFile): Promise<void> {
+  const client = await getClient();
+  const meta = { ...(file.rawMeta || {}), trash: true, originalPath: file.path };
+  const caption = `[YourDrive-Meta: ${JSON.stringify(meta)}]`;
+  await client.editMessage('me', { message: file.id, text: caption });
+}
+
+export async function restoreFromTrash(file: VFSFile): Promise<void> {
+  const client = await getClient();
+  const meta = { ...(file.rawMeta || {}) };
+  delete meta.trash;
+  meta.path = meta.originalPath || '/';
+  delete meta.originalPath;
+  const caption = `[YourDrive-Meta: ${JSON.stringify(meta)}]`;
+  await client.editMessage('me', { message: file.id, text: caption });
 }
 
 export async function listFolders(basePath: string = '/'): Promise<string[]> {

@@ -3,14 +3,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { isLoggedIn, logout } from '../../lib/telegram';
-import { listFiles, listFolders, uploadFile, deleteFile, downloadFile, createFolder, VFSFile } from '../../lib/fileOps';
-import { motion, AnimatePresence } from 'framer-motion';
+import { listFiles, listFolders, uploadFile, deleteFile, downloadFile, createFolder, VFSFile, listRecentFiles, listTrashFiles, moveToTrash, restoreFromTrash } from '../../lib/fileOps';
 
 export default function Dashboard() {
   const router = useRouter();
   
   const [loading, setLoading] = useState(true);
   const [currentPath, setCurrentPath] = useState('/');
+  const [activeTab, setActiveTab] = useState<'files' | 'recent' | 'trash'>('files');
   const [files, setFiles] = useState<VFSFile[]>([]);
   const [folders, setFolders] = useState<string[]>([]);
   
@@ -26,17 +26,25 @@ export default function Dashboard() {
       return;
     }
     fetchData();
-  }, [currentPath, router]);
+  }, [currentPath, router, activeTab]);
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [fetchedFiles, fetchedFolders] = await Promise.all([
-        listFiles(currentPath),
-        listFolders(currentPath)
-      ]);
-      setFiles(fetchedFiles);
-      setFolders(fetchedFolders);
+      if (activeTab === 'files') {
+        const [fetchedFiles, fetchedFolders] = await Promise.all([
+          listFiles(currentPath),
+          listFolders(currentPath)
+        ]);
+        setFiles(fetchedFiles);
+        setFolders(fetchedFolders);
+      } else if (activeTab === 'recent') {
+        setFiles(await listRecentFiles());
+        setFolders([]);
+      } else if (activeTab === 'trash') {
+        setFiles(await listTrashFiles());
+        setFolders([]);
+      }
     } catch (e) {
       console.error('Error fetching data:', e);
     } finally {
@@ -102,14 +110,34 @@ export default function Dashboard() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this file?')) return;
+  const handleDelete = async (file: VFSFile) => {
+    if (activeTab === 'trash') {
+      if (!confirm('Are you sure you want to permanently delete this file?')) return;
+      try {
+        await deleteFile(file.id);
+        await fetchData();
+      } catch (err) {
+        console.error('Delete failed', err);
+        alert('Delete failed');
+      }
+    } else {
+      try {
+        await moveToTrash(file);
+        await fetchData();
+      } catch (err) {
+        console.error('Move to trash failed', err);
+        alert('Move to trash failed');
+      }
+    }
+  };
+
+  const handleRestore = async (file: VFSFile) => {
     try {
-      await deleteFile(id);
+      await restoreFromTrash(file);
       await fetchData();
     } catch (err) {
-      console.error('Delete failed', err);
-      alert('Delete failed');
+      console.error('Restore failed', err);
+      alert('Restore failed');
     }
   };
 
@@ -130,33 +158,36 @@ export default function Dashboard() {
       alert('Download failed');
     }
   };
+  
   const breadcrumbParts = currentPath.split('/').filter(Boolean);
 
   return (
-    <div className="h-screen w-full bg-[#050505] text-[#ededed] font-display flex overflow-hidden relative">
+    <div className="h-screen w-full bg-[#0a0a0a] text-[#ededed] font-display flex overflow-hidden">
       
-      {/* Background Glow Orbs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-violet-600/15 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-5%] w-[30%] h-[40%] rounded-full bg-indigo-600/15 blur-[120px] pointer-events-none" />
-
-      {/* Sidebar Layout */}
-      <aside className="w-[260px] border-r border-white/5 bg-white/[0.01] backdrop-blur-3xl flex-col justify-between hidden md:flex shrink-0 z-10">
+      {/* Sidebar */}
+      <aside className="w-[240px] border-r border-[#222] bg-[#0a0a0a] flex flex-col justify-between hidden md:flex shrink-0">
         <div className="p-6">
-          <div className="text-white font-medium text-xl mb-8 tracking-tight pl-2 flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-violet-500 to-indigo-600 shadow-[0_0_10px_rgba(139,92,246,0.5)]"></div>
-            YourDrive
-          </div>
-          <nav className="flex flex-col gap-1.5">
-            <button className="flex items-center gap-3 bg-gradient-to-r from-violet-500/15 to-transparent text-violet-200 border-l-2 border-violet-500 px-4 py-2.5 rounded-r-xl font-medium transition-colors text-sm">
-              <svg className="w-5 h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+          <div className="text-[#ededed] font-medium text-lg mb-8 tracking-tight">YourDrive</div>
+          <nav className="flex flex-col gap-1">
+            <button 
+              onClick={() => setActiveTab('files')}
+              className={`flex items-center gap-3 px-3 py-2 rounded-md font-medium transition-colors text-sm ${activeTab === 'files' ? 'bg-[#222] text-[#ededed]' : 'text-[#888] hover:bg-[#1a1a1a] hover:text-[#ededed]'}`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
               My Files
             </button>
-            <button className="flex items-center gap-3 hover:bg-white/5 text-[#888] hover:text-white border-l-2 border-transparent px-4 py-2.5 rounded-r-xl font-medium transition-colors text-sm">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <button 
+              onClick={() => setActiveTab('recent')}
+              className={`flex items-center gap-3 px-3 py-2 rounded-md font-medium transition-colors text-sm ${activeTab === 'recent' ? 'bg-[#222] text-[#ededed]' : 'text-[#888] hover:bg-[#1a1a1a] hover:text-[#ededed]'}`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
               Recent
             </button>
-            <button className="flex items-center gap-3 hover:bg-white/5 text-[#888] hover:text-white border-l-2 border-transparent px-4 py-2.5 rounded-r-xl font-medium transition-colors text-sm">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            <button 
+              onClick={() => setActiveTab('trash')}
+              className={`flex items-center gap-3 px-3 py-2 rounded-md font-medium transition-colors text-sm ${activeTab === 'trash' ? 'bg-[#222] text-[#ededed]' : 'text-[#888] hover:bg-[#1a1a1a] hover:text-[#ededed]'}`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
               Trash
             </button>
           </nav>
@@ -164,160 +195,147 @@ export default function Dashboard() {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col relative z-10 overflow-hidden">
-
-      {/* Top bar */}
-      <header className="sticky top-0 z-20 bg-transparent backdrop-blur-md border-b border-white/5 px-8 py-5 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <h1 className="font-heading text-xl font-medium tracking-tight">YourDrive</h1>
-          
-          <nav className="flex items-center text-sm font-medium gap-2">
-            <span className="text-[#686868] px-2">|</span>
-            <button 
-              onClick={() => handleBreadcrumbClick(-1)}
-              className="hover:text-white text-[#c2c2c2] transition-colors"
-            >
-              Root
-            </button>
-            {breadcrumbParts.map((part, idx) => (
-              <React.Fragment key={idx}>
-                <span className="text-[#686868]">/</span>
-                <button
-                  onClick={() => handleBreadcrumbClick(idx)}
-                  className="hover:text-white text-[#c2c2c2] transition-colors"
+      <div className="flex-1 flex flex-col bg-[#0a0a0a] overflow-hidden">
+        {/* Top bar */}
+        <header className="sticky top-0 z-10 bg-[#0a0a0a] border-b border-[#222] px-8 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {activeTab === 'files' && (
+              <nav className="flex items-center text-sm font-medium gap-2">
+                <button 
+                  onClick={() => handleBreadcrumbClick(-1)}
+                  className="hover:text-white text-[#888] transition-colors"
                 >
-                  {part}
+                  Root
                 </button>
-              </React.Fragment>
-            ))}
-          </nav>
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={() => setShowNewFolder(true)}
-            className="text-sm font-medium text-violet-200 hover:text-white bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 px-4 py-2.5 rounded-xl transition-all flex items-center gap-2"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-            New Folder
-          </button>
-          <button 
-            onClick={() => fileInputRef.current?.click()}
-            className="text-sm font-medium bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:from-violet-500 hover:to-indigo-500 px-5 py-2.5 rounded-xl transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(109,40,217,0.3)] hover:shadow-[0_0_20px_rgba(109,40,217,0.5)]"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-            Upload File
-          </button>
-          <div className="w-px h-5 bg-[#333] mx-1"></div>
-          <button 
-            onClick={handleLogout}
-            className="text-sm font-medium text-[#c2c2c2] hover:text-white transition-colors"
-          >
-            Logout
-          </button>
-        </div>
-      </header>
-
-      {/* Main content */}
-      <main className="flex-1 p-6 overflow-y-auto">
-        {loading ? (
-          <div className="flex justify-center items-center h-48">
-            <div className="animate-pulse flex gap-2">
-              <div className="w-2 h-2 rounded-full bg-[#6b62f2]"></div>
-              <div className="w-2 h-2 rounded-full bg-[#6b62f2] animation-delay-200"></div>
-              <div className="w-2 h-2 rounded-full bg-[#6b62f2] animation-delay-400"></div>
-            </div>
+                {breadcrumbParts.map((part, idx) => (
+                  <React.Fragment key={idx}>
+                    <span className="text-[#444]">/</span>
+                    <button
+                      onClick={() => handleBreadcrumbClick(idx)}
+                      className="hover:text-white text-[#888] transition-colors"
+                    >
+                      {part}
+                    </button>
+                  </React.Fragment>
+                ))}
+              </nav>
+            )}
+            {activeTab === 'recent' && <span className="text-sm font-medium text-[#ededed]">Recent Files</span>}
+            {activeTab === 'trash' && <span className="text-sm font-medium text-[#ededed]">Trash</span>}
           </div>
-        ) : folders.length === 0 && files.length === 0 ? (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4 }}
-            className="flex flex-col items-center justify-center h-[60vh] text-[#686868]"
-          >
-            <div className="w-24 h-24 mb-6 rounded-3xl bg-violet-500/5 flex items-center justify-center border border-violet-500/20 border-dashed shadow-[inset_0_0_20px_rgba(139,92,246,0.1)]">
-              <svg className="w-10 h-10 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-              </svg>
-            </div>
-            <p className="text-xl font-medium text-white mb-2 tracking-tight">This folder is empty</p>
-            <p className="text-sm text-[#888] mb-8">Upload files or create a new folder to get started.</p>
+          
+          <div className="flex items-center gap-3">
+            {activeTab === 'files' && (
+              <>
+                <button 
+                  onClick={() => setShowNewFolder(true)}
+                  className="text-sm font-medium text-[#ededed] bg-[#1a1a1a] hover:bg-[#222] border border-[#333] px-4 py-2 rounded-md transition-colors flex items-center gap-2"
+                >
+                  New Folder
+                </button>
+                <button 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="text-sm font-medium bg-[#ededed] text-black hover:bg-white px-4 py-2 rounded-md transition-colors flex items-center gap-2"
+                >
+                  Upload
+                </button>
+              </>
+            )}
+            <div className="w-px h-5 bg-[#333] mx-2"></div>
             <button 
-              onClick={() => fileInputRef.current?.click()}
-              className="text-sm font-medium bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:scale-105 px-8 py-3 rounded-full transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(109,40,217,0.3)]"
+              onClick={handleLogout}
+              className="text-sm font-medium text-[#888] hover:text-[#ededed] transition-colors"
             >
-              Upload a file
+              Logout
             </button>
-          </motion.div>
-        ) : (
-          <motion.div 
-            initial="hidden"
-            animate="visible"
-            variants={{
-              hidden: { opacity: 0 },
-              visible: { opacity: 1, transition: { staggerChildren: 0.05 } }
-            }}
-            className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"
-          >
-            {/* Folders */}
-            {folders.map(folderName => (
-              <motion.div 
-                variants={{
-                  hidden: { opacity: 0, y: 10 },
-                  visible: { opacity: 1, y: 0 }
-                }}
-                key={folderName}
-                onClick={() => navigateToFolder(folderName)}
-                className="cursor-pointer bg-white/[0.02] border border-white/5 backdrop-blur-xl rounded-[24px] p-5 flex flex-col items-center justify-center gap-3 hover:bg-white/[0.04] hover:border-violet-500/30 hover:-translate-y-1 transition-all group shadow-lg"
-              >
-                <svg className="w-12 h-12 text-violet-400 group-hover:scale-105 transition-transform drop-shadow-[0_0_8px_rgba(167,139,250,0.4)]" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                </svg>
-                <span className="text-sm font-medium text-center truncate w-full text-violet-50 group-hover:text-white transition-colors">{folderName}</span>
-              </motion.div>
-            ))}
-            
-            {/* Files */}
-            {files.map(file => (
-              <motion.div 
-                variants={{
-                  hidden: { opacity: 0, y: 10 },
-                  visible: { opacity: 1, y: 0 }
-                }}
-                key={file.id}
-                className="bg-white/[0.02] border border-white/5 backdrop-blur-xl rounded-[24px] p-5 flex flex-col items-center justify-between gap-3 hover:bg-white/[0.04] hover:border-white/10 hover:-translate-y-1 transition-all group relative shadow-lg"
-              >
-                <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 z-10">
-                  <button 
-                    onClick={(e) => { e.stopPropagation(); handleDownload(file); }}
-                    className="p-1.5 bg-black/60 backdrop-blur rounded-full hover:bg-violet-600 hover:text-white transition-colors"
-                    title="Download"
-                  >
-                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                  </button>
-                  <button 
-                    onClick={(e) => { e.stopPropagation(); handleDelete(file.id); }}
-                    className="p-1.5 bg-black/60 backdrop-blur rounded-full hover:bg-red-500 hover:text-white transition-colors"
-                    title="Delete"
-                  >
-                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                  </button>
-                </div>
+          </div>
+        </header>
 
-                <div className="flex-1 flex items-center justify-center pt-2">
-                   <svg className="w-12 h-12 text-[#888] group-hover:text-indigo-400 group-hover:scale-105 transition-all drop-shadow-[0_0_8px_rgba(129,140,248,0)] group-hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.4)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                   </svg>
+        {/* Main content */}
+        <main className="flex-1 p-8 overflow-y-auto">
+          {loading ? (
+            <div className="flex justify-center items-center h-48">
+              <div className="animate-pulse flex gap-2">
+                <div className="w-2 h-2 rounded-full bg-[#444]"></div>
+                <div className="w-2 h-2 rounded-full bg-[#444] animation-delay-200"></div>
+                <div className="w-2 h-2 rounded-full bg-[#444] animation-delay-400"></div>
+              </div>
+            </div>
+          ) : folders.length === 0 && files.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-[60vh] text-[#686868]">
+              <div className="w-16 h-16 mb-4 rounded-xl bg-[#111] flex items-center justify-center border border-[#222] border-dashed">
+                <svg className="w-6 h-6 text-[#555]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+              </div>
+              <p className="text-sm font-medium text-[#ededed] mb-1">No files found</p>
+              <p className="text-xs text-[#888]">This section is completely empty.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+              {/* Folders */}
+              {folders.map(folderName => (
+                <div 
+                  key={folderName}
+                  onClick={() => navigateToFolder(folderName)}
+                  className="cursor-pointer bg-[#111] border border-[#222] rounded-lg p-4 flex items-center gap-3 hover:border-[#444] transition-colors group"
+                >
+                  <svg className="w-6 h-6 text-[#888] group-hover:text-[#ededed] transition-colors flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                  </svg>
+                  <span className="text-sm font-medium truncate text-[#ededed]">{folderName}</span>
                 </div>
-                <div className="w-full text-center">
-                  <p className="text-sm font-medium text-[#ededed] truncate w-full" title={file.name}>{file.name}</p>
-                  <p className="text-xs text-[#888] mt-0.5">{formatSize(file.size)}</p>
+              ))}
+              
+              {/* Files */}
+              {files.map(file => (
+                <div 
+                  key={file.id}
+                  className="bg-[#111] border border-[#222] rounded-lg p-4 flex flex-col justify-between gap-4 hover:border-[#444] transition-colors group relative h-32"
+                >
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 z-10 bg-[#111] rounded-md border border-[#222] shadow-sm">
+                    {activeTab !== 'trash' && (
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); handleDownload(file); }}
+                        className="p-1.5 hover:bg-[#222] text-[#888] hover:text-[#ededed] transition-colors rounded-l-md"
+                        title="Download"
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                      </button>
+                    )}
+                    {activeTab === 'trash' && (
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); handleRestore(file); }}
+                        className="p-1.5 hover:bg-[#222] text-[#888] hover:text-[#ededed] transition-colors rounded-l-md border-r border-[#222]"
+                        title="Restore"
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                      </button>
+                    )}
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); handleDelete(file); }}
+                      className="p-1.5 hover:bg-red-500/20 text-[#888] hover:text-red-500 transition-colors rounded-r-md"
+                      title={activeTab === 'trash' ? 'Delete Permanently' : 'Move to Trash'}
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    </button>
+                  </div>
+
+                  <div className="flex-1 flex items-center justify-center pt-2">
+                     <svg className="w-8 h-8 text-[#555] group-hover:text-[#888] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                     </svg>
+                  </div>
+                  
+                  <div>
+                    <p className="text-xs font-medium text-[#ededed] truncate w-full" title={file.name}>{file.name}</p>
+                    <p className="text-[10px] text-[#888] mt-0.5">{formatSize(file.size)}</p>
+                  </div>
                 </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
-      </main>
+              ))}
+            </div>
+          )}
+        </main>
       </div>
 
       <input 
@@ -329,27 +347,27 @@ export default function Dashboard() {
       {/* New Folder Modal */}
       {showNewFolder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <form onSubmit={handleCreateFolder} className="bg-[#161616] border border-[#e5e5e5]/10 rounded-[24px] p-6 w-full max-w-sm">
-            <h2 className="font-heading text-xl mb-4 text-[#ededed]">Create New Folder</h2>
+          <form onSubmit={handleCreateFolder} className="bg-[#111] border border-[#222] rounded-xl p-6 w-full max-w-sm shadow-2xl">
+            <h2 className="text-lg font-medium mb-4 text-[#ededed]">Create New Folder</h2>
             <input 
               type="text" 
               autoFocus
               value={newFolderName}
               onChange={e => setNewFolderName(e.target.value)}
               placeholder="Folder name"
-              className="w-full bg-[#0a0a0a] border border-[#e5e5e5]/20 rounded-xl px-4 py-3 text-[#ededed] placeholder-[#686868] focus:outline-none focus:border-[#6b62f2] transition-colors"
+              className="w-full bg-[#0a0a0a] border border-[#333] rounded-md px-3 py-2 text-sm text-[#ededed] placeholder-[#666] focus:outline-none focus:border-[#555] transition-colors"
             />
             <div className="flex gap-3 mt-6 justify-end">
               <button 
                 type="button" 
                 onClick={() => setShowNewFolder(false)}
-                className="px-4 py-2 text-sm font-medium text-[#c2c2c2] hover:text-white transition-colors"
+                className="px-4 py-2 text-sm font-medium text-[#888] hover:text-[#ededed] transition-colors"
               >
                 Cancel
               </button>
               <button 
-                type="submit"
-                className="px-6 py-2 bg-white text-black rounded-full font-medium text-sm hover:scale-105 transition-transform"
+                type="submit" 
+                className="px-4 py-2 text-sm font-medium bg-[#ededed] text-black hover:bg-white rounded-md transition-colors"
               >
                 Create
               </button>

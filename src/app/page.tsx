@@ -18,17 +18,14 @@ export default function Home() {
               Privacy
             </button>
           </div>
-          <Link href="/login" className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-full-2 px-5 py-2 text-[14px] font-medium hover:from-violet-500 hover:to-indigo-500 hover:scale-105 active:scale-95 transition-all duration-300 ml-2 shadow-[0_0_15px_rgba(109,40,217,0.4)]">
+          <Link href="/login" className="bg-[#ededed] text-black rounded-md px-5 py-2 text-[14px] font-medium hover:bg-white hover:scale-105 active:scale-95 transition-all duration-300 ml-2">
             Connect Telegram
           </Link>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative w-full min-h-screen flex items-center bg-[#050505] overflow-hidden">
-        {/* Background Glow Orbs */}
-        <div className="absolute top-[0%] left-[-10%] w-[50%] h-[50%] rounded-full bg-violet-600/15 blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[50%] rounded-full bg-indigo-600/15 blur-[120px] pointer-events-none" />
+      <section className="relative w-full min-h-screen flex items-center bg-[#0a0a0a] overflow-hidden">
         
         <div className="max-w-[1200px] mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center relative z-10 pt-32 pb-24">
           <div className="flex flex-col gap-8">
@@ -43,10 +40,10 @@ export default function Home() {
             </p>
 
             <div className="flex gap-4 items-center">
-              <Link href="/login" className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-full-2 px-8 py-3.5 text-[16px] font-medium hover:from-violet-500 hover:to-indigo-500 hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_0_20px_rgba(109,40,217,0.4)]">
+              <Link href="/login" className="bg-[#ededed] text-black rounded-md px-8 py-3.5 text-[16px] font-medium hover:bg-white hover:scale-105 active:scale-95 transition-all duration-300">
                 Get Started
               </Link>
-              <button className="rounded-full-2 px-8 py-3.5 text-[16px] font-medium text-violet-200 border border-violet-500/20 bg-violet-500/10 hover:bg-violet-500/20 hover:text-white hover:scale-105 active:scale-95 transition-all duration-300">
+              <button className="rounded-md px-8 py-3.5 text-[16px] font-medium text-[#ededed] bg-[#1a1a1a] hover:bg-[#222] border border-[#333] hover:scale-105 active:scale-95 transition-all duration-300">
                 How it works
               </button>
             </div>
@@ -61,8 +58,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Dusk Violet Wash */}
-      <div className="w-full h-px bg-dusk-violet-wash" />
+      {/* Divider */}
+      <div className="w-full h-px bg-[#222]" />
 
       {/* Features */}
       <main className="max-w-[1200px] mx-auto px-6 py-24 flex flex-col" style={{ gap: '80px' }}>
@@ -96,25 +93,25 @@ export default function Home() {
 
         {/* Cards */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="frosted-card p-7 hover:-translate-y-2 hover:shadow-2xl hover:bg-white/[0.04] transition-all duration-500 cursor-default">
+          <div className="bg-[#111] border border-[#222] rounded-xl p-7 hover:-translate-y-2 hover:border-[#444] transition-all duration-300 cursor-default">
             <h3 className="text-[24px] font-heading font-medium text-bone mb-3 leading-tight">100% Private</h3>
             <p className="text-[16px] text-ash leading-relaxed">
               Client-side encrypted. Nobody but you can access your files.
             </p>
           </div>
-          <div className="frosted-card p-7 hover:-translate-y-2 hover:shadow-2xl hover:bg-white/[0.04] transition-all duration-500 cursor-default">
+          <div className="bg-[#111] border border-[#222] rounded-xl p-7 hover:-translate-y-2 hover:border-[#444] transition-all duration-300 cursor-default">
             <h3 className="text-[24px] font-heading font-medium text-bone mb-3 leading-tight">Unlimited</h3>
             <p className="text-[16px] text-ash leading-relaxed">
               2GB per file. No total cap. Built on Telegram's infrastructure.
             </p>
           </div>
-          <div className="frosted-card p-7 hover:-translate-y-2 hover:shadow-2xl hover:bg-white/[0.04] transition-all duration-500 cursor-default">
+          <div className="bg-[#111] border border-[#222] rounded-xl p-7 hover:-translate-y-2 hover:border-[#444] transition-all duration-300 cursor-default">
             <h3 className="text-[24px] font-heading font-medium text-bone mb-3 leading-tight">Folder System</h3>
             <p className="text-[16px] text-ash leading-relaxed">
               Organize files and subfolders exactly like a real hard drive.
             </p>
           </div>
-          <div className="frosted-card p-7 hover:-translate-y-2 hover:shadow-2xl hover:bg-white/[0.04] transition-all duration-500 cursor-default">
+          <div className="bg-[#111] border border-[#222] rounded-xl p-7 hover:-translate-y-2 hover:border-[#444] transition-all duration-300 cursor-default">
             <h3 className="text-[24px] font-heading font-medium text-bone mb-3 leading-tight">For Everyone</h3>
             <p className="text-[16px] text-ash leading-relaxed">
               Login with any Telegram account for an instant personal cloud.
@@ -124,9 +121,9 @@ export default function Home() {
 
         {/* Status Banner */}
         <section className="flex justify-center">
-          <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full-2 border border-hairline/12 bg-graphite/50 backdrop-blur-sm">
+          <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-[#222] bg-[#111]">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M7 1L8.5 5.5L13 7L8.5 8.5L7 13L5.5 8.5L1 7L5.5 5.5L7 1Z" fill="#6b62f2" />
+              <path d="M7 1L8.5 5.5L13 7L8.5 8.5L7 13L5.5 8.5L1 7L5.5 5.5L7 1Z" fill="#ededed" />
             </svg>
             <span className="text-[14px] text-bone/90 font-medium">Open source & free forever</span>
             <span className="text-[14px] text-ash">→</span>
