@@ -78,12 +78,10 @@ body {
   font-family: var(--font-dm-sans);
 }
 
-.hero-gradient {
-  background: linear-gradient(90deg, #ff7e5f 0%, #feb47b 40%, #86a8e7 70%, #91eae4 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
+.bg-hero-horizon {
+  background: linear-gradient(90deg, #ff7f50 0%, #0047ab 100%);
 }
 
-.bg-hero-horizon {
-  background: linear-gradient(90deg, rgba(255,126,95,0.15) 0%, rgba(134,168,231,0.15) 100%);
+.bg-dusk-violet-wash {
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0) 40%, rgba(107, 98, 242, 0.565) 50%, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0));
 }
