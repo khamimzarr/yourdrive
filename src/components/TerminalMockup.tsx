@@ -90,7 +90,7 @@ export default function TerminalMockup() {
                 : line.text.startsWith('✓')
                   ? 'text-[#28c840]'
                   : line.text.startsWith('▓')
-                    ? 'text-[#fff]'
+                    ? 'text-dusk-violet'
                     : 'text-ash'
             }
           >
