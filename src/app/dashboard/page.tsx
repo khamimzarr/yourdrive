@@ -140,7 +140,7 @@ export default function Dashboard() {
           <h1 className="font-heading text-xl font-medium tracking-tight">YourDrive</h1>
           
           <nav className="flex items-center text-sm font-medium gap-2">
-            <span className="text-[#slate] px-2">|</span>
+            <span className="text-[#686868] px-2">|</span>
             <button 
               onClick={() => handleBreadcrumbClick(-1)}
               className="hover:text-white text-[#c2c2c2] transition-colors"
@@ -161,12 +161,29 @@ export default function Dashboard() {
           </nav>
         </div>
         
-        <button 
-          onClick={handleLogout}
-          className="text-sm font-medium text-[#c2c2c2] hover:text-white transition-colors"
-        >
-          Logout
-        </button>
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={() => setShowNewFolder(true)}
+            className="text-sm font-medium text-[#c2c2c2] hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+            New Folder
+          </button>
+          <button 
+            onClick={() => fileInputRef.current?.click()}
+            className="text-sm font-medium bg-white text-black hover:bg-gray-200 px-5 py-2 rounded-lg transition-colors flex items-center gap-2 shadow-lg shadow-white/10"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            Upload File
+          </button>
+          <div className="w-px h-5 bg-[#333] mx-1"></div>
+          <button 
+            onClick={handleLogout}
+            className="text-sm font-medium text-[#c2c2c2] hover:text-white transition-colors"
+          >
+            Logout
+          </button>
+        </div>
       </header>
 
       {/* Main content */}
@@ -180,9 +197,20 @@ export default function Dashboard() {
             </div>
           </div>
         ) : folders.length === 0 && files.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-64 text-[#686868]">
-            <p className="text-lg mb-2">This folder is empty</p>
-            <p className="text-sm text-[#c2c2c2]">Upload some files or create a folder to get started.</p>
+          <div className="flex flex-col items-center justify-center h-[60vh] text-[#686868]">
+            <div className="w-24 h-24 mb-6 rounded-3xl bg-white/5 flex items-center justify-center border border-white/10 border-dashed">
+              <svg className="w-10 h-10 text-[#555]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+            </div>
+            <p className="text-xl font-medium text-white mb-2 tracking-tight">This folder is empty</p>
+            <p className="text-sm text-[#888] mb-8">Upload files or create a new folder to get started.</p>
+            <button 
+              onClick={() => fileInputRef.current?.click()}
+              className="text-sm font-medium bg-white/10 text-white hover:bg-white/15 px-6 py-2.5 rounded-full transition-colors flex items-center gap-2"
+            >
+              Upload a file
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -238,37 +266,12 @@ export default function Dashboard() {
         )}
       </main>
 
-      {/* Bottom action bar */}
-      <footer className="sticky bottom-0 p-6 bg-gradient-to-t from-[#0a0a0a] to-transparent flex justify-center gap-4">
-        <button 
-          onClick={() => setShowNewFolder(true)}
-          className="bg-white text-black px-6 py-3 rounded-full font-medium text-sm hover:scale-105 transition-transform"
-        >
-          New Folder
-        </button>
-        <button 
-          onClick={() => fileInputRef.current?.click()}
-          disabled={uploading}
-          className="bg-white text-black px-6 py-3 rounded-full font-medium text-sm hover:scale-105 transition-transform disabled:opacity-50 disabled:hover:scale-100 flex items-center gap-2"
-        >
-          {uploading ? (
-            <>
-              <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-              </svg>
-              Uploading...
-            </>
-          ) : 'Upload File'}
-        </button>
-        <input 
-          type="file" 
-          className="hidden" 
-          ref={fileInputRef} 
-          onChange={handleFileChange} 
-        />
-      </footer>
-
+      <input 
+        type="file" 
+        className="hidden" 
+        ref={fileInputRef} 
+        onChange={handleFileChange} 
+      />
       {/* New Folder Modal */}
       {showNewFolder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
