@@ -115,7 +115,7 @@ export default function Dashboard() {
   const handleDownload = async (file: VFSFile) => {
     try {
       const buffer = await downloadFile(file.id);
-      const blob = new Blob([buffer], { type: file.mimeType || 'application/octet-stream' });
+      const blob = new Blob([buffer as any], { type: file.mimeType || 'application/octet-stream' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
