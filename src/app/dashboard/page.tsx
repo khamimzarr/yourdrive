@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { isLoggedIn, logout } from '../../lib/telegram';
 import { listFiles, listFolders, uploadFile, deleteFile, downloadFile, createFolder, VFSFile } from '../../lib/fileOps';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -133,7 +134,32 @@ export default function Dashboard() {
   const breadcrumbParts = currentPath.split('/').filter(Boolean);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-[#ededed] font-display flex flex-col">
+    <div className="h-screen w-full bg-[#0a0a0a] text-[#ededed] font-display flex overflow-hidden">
+      
+      {/* Sidebar Layout */}
+      <aside className="w-[260px] border-r border-[#1a1a1a] bg-[#0a0a0a] flex-col justify-between hidden md:flex shrink-0">
+        <div className="p-6">
+          <div className="text-white font-medium text-xl mb-8 tracking-tight pl-2">YourDrive</div>
+          <nav className="flex flex-col gap-1.5">
+            <button className="flex items-center gap-3 bg-white/10 text-white px-3 py-2.5 rounded-xl font-medium transition-colors text-sm">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+              My Files
+            </button>
+            <button className="flex items-center gap-3 hover:bg-white/5 text-[#888] hover:text-white px-3 py-2.5 rounded-xl font-medium transition-colors text-sm">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              Recent
+            </button>
+            <button className="flex items-center gap-3 hover:bg-white/5 text-[#888] hover:text-white px-3 py-2.5 rounded-xl font-medium transition-colors text-sm">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              Trash
+            </button>
+          </nav>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col relative bg-[#0a0a0a] overflow-hidden">
+
       {/* Top bar */}
       <header className="sticky top-0 z-10 bg-[#161616]/80 backdrop-blur border-b border-[#e5e5e5]/10 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -197,7 +223,12 @@ export default function Dashboard() {
             </div>
           </div>
         ) : folders.length === 0 && files.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-[60vh] text-[#686868]">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4 }}
+            className="flex flex-col items-center justify-center h-[60vh] text-[#686868]"
+          >
             <div className="w-24 h-24 mb-6 rounded-3xl bg-white/5 flex items-center justify-center border border-white/10 border-dashed">
               <svg className="w-10 h-10 text-[#555]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -211,28 +242,44 @@ export default function Dashboard() {
             >
               Upload a file
             </button>
-          </div>
+          </motion.div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          <motion.div 
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { opacity: 1, transition: { staggerChildren: 0.05 } }
+            }}
+            className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"
+          >
             {/* Folders */}
             {folders.map(folderName => (
-              <div 
+              <motion.div 
+                variants={{
+                  hidden: { opacity: 0, y: 10 },
+                  visible: { opacity: 1, y: 0 }
+                }}
                 key={folderName}
                 onClick={() => navigateToFolder(folderName)}
-                className="cursor-pointer bg-[rgba(212,212,212,0.06)] backdrop-blur rounded-[24px] p-4 flex flex-col items-center justify-center gap-3 hover:bg-[rgba(212,212,212,0.1)] transition-colors group"
+                className="cursor-pointer bg-[rgba(212,212,212,0.06)] backdrop-blur rounded-[24px] p-4 flex flex-col items-center justify-center gap-3 hover:bg-[rgba(212,212,212,0.1)] hover:-translate-y-1 transition-all group shadow-sm hover:shadow-xl"
               >
                 <svg className="w-12 h-12 text-[#ededed] group-hover:scale-105 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
                 </svg>
                 <span className="text-sm font-medium text-center truncate w-full">{folderName}</span>
-              </div>
+              </motion.div>
             ))}
             
             {/* Files */}
             {files.map(file => (
-              <div 
+              <motion.div 
+                variants={{
+                  hidden: { opacity: 0, y: 10 },
+                  visible: { opacity: 1, y: 0 }
+                }}
                 key={file.id}
-                className="bg-[rgba(212,212,212,0.06)] backdrop-blur rounded-[24px] p-4 flex flex-col items-center justify-between gap-3 hover:bg-[rgba(212,212,212,0.1)] transition-colors group relative"
+                className="bg-[rgba(212,212,212,0.06)] backdrop-blur rounded-[24px] p-4 flex flex-col items-center justify-between gap-3 hover:bg-[rgba(212,212,212,0.1)] hover:-translate-y-1 transition-all group relative shadow-sm hover:shadow-xl"
               >
                 <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
                   <button 
@@ -258,13 +305,14 @@ export default function Dashboard() {
                 </div>
                 <div className="w-full text-center">
                   <p className="text-sm font-medium text-[#ededed] truncate w-full" title={file.name}>{file.name}</p>
-                  <p className="text-xs text-[#ash] mt-0.5">{formatSize(file.size)}</p>
+                  <p className="text-xs text-[#888] mt-0.5">{formatSize(file.size)}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
       </main>
+      </div>
 
       <input 
         type="file" 

@@ -13,6 +13,7 @@
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.1",
     "events": "^3.3.0",
+    "framer-motion": "^13.4.6",
     "next": "16.3.8",
     "qrcode": "^1.5.4",
     "react": "19.2.8",
