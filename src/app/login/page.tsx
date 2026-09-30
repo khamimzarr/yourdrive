@@ -95,7 +95,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-[rgba(212,212,212,0.06)] backdrop-blur-md rounded-[24px] border border-[#e5e5e5]/10 p-8">
+      <div className="max-w-md w-full bg-[#111] rounded-xl border border-[#222] p-8 shadow-2xl">
         <div className="mb-6">
           <Link href="/" className="text-[#686868] hover:text-[#ededed] text-sm flex items-center gap-2 transition-colors">
             &larr; Back
@@ -122,20 +122,20 @@ export default function LoginPage() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-[#161616] border border-[#e5e5e5]/10 rounded-xl px-4 py-3 text-[#ededed] focus:outline-none focus:border-[#6b62f2]/50 transition-colors"
+                  className="w-full bg-[#0a0a0a] border border-[#333] rounded-md px-4 py-3 text-[#ededed] focus:outline-none focus:border-[#555] transition-colors"
                   placeholder="Enter your password"
                   autoFocus
                 />
               </div>
               <button
                 type="submit"
-                className="w-full bg-white text-black rounded-full px-6 py-3 font-medium hover:bg-white/90 transition-colors mt-2"
+                className="w-full bg-[#ededed] text-black rounded-md px-6 py-3 font-medium hover:bg-white transition-colors mt-2"
               >
                 Submit Password
               </button>
             </form>
           ) : qrImageUrl ? (
-            <div className="bg-white p-2 rounded-2xl">
+            <div className="bg-white p-3 rounded-lg shadow-sm">
               <img src={qrImageUrl} alt="Telegram Login QR Code" className="w-[280px] h-[280px]" />
             </div>
           ) : null}
