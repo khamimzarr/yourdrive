@@ -1,5 +1,6 @@
 import { TelegramClient, Api } from "teleproto";
 import { StringSession } from "teleproto/sessions";
+import { PromisedWebSockets } from "teleproto/extensions";
 
 const SESSION_KEY = "yourdrive_session";
 let client: TelegramClient | null = null;
@@ -23,6 +24,7 @@ export async function getClient(): Promise<TelegramClient> {
 
   client = new TelegramClient(session, apiId, apiHash, {
     connectionRetries: 5,
+    ...(typeof window !== "undefined" ? { networkSocket: PromisedWebSockets } : {}),
   });
 
   await client.connect();
