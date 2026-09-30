@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import TerminalMockup from '@/components/TerminalMockup';
 
 export default function Home() {
@@ -17,9 +18,9 @@ export default function Home() {
               Privacy
             </button>
           </div>
-          <button className="bg-snow-white text-ink-black rounded-full-2 px-4 py-1.5 text-[14px] font-medium hover:bg-bone transition-colors duration-200 ml-2">
+          <Link href="/login" className="bg-snow-white text-ink-black rounded-full-2 px-4 py-1.5 text-[14px] font-medium hover:bg-bone transition-colors duration-200 ml-2">
             Connect Telegram
-          </button>
+          </Link>
         </div>
       </nav>
 
@@ -44,9 +45,9 @@ export default function Home() {
             </p>
 
             <div className="flex gap-3 items-center">
-              <button className="bg-snow-white text-ink-black rounded-full-2 px-6 py-3 text-[16px] font-medium hover:bg-bone transition-colors duration-200">
+              <Link href="/login" className="bg-snow-white text-ink-black rounded-full-2 px-6 py-3 text-[16px] font-medium hover:bg-bone transition-colors duration-200">
                 Get Started
-              </button>
+              </Link>
               <button className="rounded-full-2 px-6 py-3 text-[16px] text-snow-white/80 border border-hairline/15 hover:bg-snow-white/5 transition-colors duration-200">
                 How it works
               </button>
