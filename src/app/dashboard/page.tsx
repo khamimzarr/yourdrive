@@ -131,25 +131,30 @@ export default function Dashboard() {
     }
   };
 
-  const breadcrumbParts = currentPath.split('/').filter(Boolean);
-
   return (
-    <div className="h-screen w-full bg-[#0a0a0a] text-[#ededed] font-display flex overflow-hidden">
+    <div className="h-screen w-full bg-[#050505] text-[#ededed] font-display flex overflow-hidden relative">
       
+      {/* Background Glow Orbs */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-violet-600/15 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-5%] w-[30%] h-[40%] rounded-full bg-indigo-600/15 blur-[120px] pointer-events-none" />
+
       {/* Sidebar Layout */}
-      <aside className="w-[260px] border-r border-[#1a1a1a] bg-[#0a0a0a] flex-col justify-between hidden md:flex shrink-0">
+      <aside className="w-[260px] border-r border-white/5 bg-white/[0.01] backdrop-blur-3xl flex-col justify-between hidden md:flex shrink-0 z-10">
         <div className="p-6">
-          <div className="text-white font-medium text-xl mb-8 tracking-tight pl-2">YourDrive</div>
+          <div className="text-white font-medium text-xl mb-8 tracking-tight pl-2 flex items-center gap-2">
+            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-violet-500 to-indigo-600 shadow-[0_0_10px_rgba(139,92,246,0.5)]"></div>
+            YourDrive
+          </div>
           <nav className="flex flex-col gap-1.5">
-            <button className="flex items-center gap-3 bg-white/10 text-white px-3 py-2.5 rounded-xl font-medium transition-colors text-sm">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+            <button className="flex items-center gap-3 bg-gradient-to-r from-violet-500/15 to-transparent text-violet-200 border-l-2 border-violet-500 px-4 py-2.5 rounded-r-xl font-medium transition-colors text-sm">
+              <svg className="w-5 h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
               My Files
             </button>
-            <button className="flex items-center gap-3 hover:bg-white/5 text-[#888] hover:text-white px-3 py-2.5 rounded-xl font-medium transition-colors text-sm">
+            <button className="flex items-center gap-3 hover:bg-white/5 text-[#888] hover:text-white border-l-2 border-transparent px-4 py-2.5 rounded-r-xl font-medium transition-colors text-sm">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
               Recent
             </button>
-            <button className="flex items-center gap-3 hover:bg-white/5 text-[#888] hover:text-white px-3 py-2.5 rounded-xl font-medium transition-colors text-sm">
+            <button className="flex items-center gap-3 hover:bg-white/5 text-[#888] hover:text-white border-l-2 border-transparent px-4 py-2.5 rounded-r-xl font-medium transition-colors text-sm">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
               Trash
             </button>
@@ -158,10 +163,10 @@ export default function Dashboard() {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col relative bg-[#0a0a0a] overflow-hidden">
+      <div className="flex-1 flex flex-col relative z-10 overflow-hidden">
 
       {/* Top bar */}
-      <header className="sticky top-0 z-10 bg-[#161616]/80 backdrop-blur border-b border-[#e5e5e5]/10 px-6 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-20 bg-transparent backdrop-blur-md border-b border-white/5 px-8 py-5 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <h1 className="font-heading text-xl font-medium tracking-tight">YourDrive</h1>
           
@@ -190,14 +195,14 @@ export default function Dashboard() {
         <div className="flex items-center gap-4">
           <button 
             onClick={() => setShowNewFolder(true)}
-            className="text-sm font-medium text-[#c2c2c2] hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+            className="text-sm font-medium text-violet-200 hover:text-white bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 px-4 py-2.5 rounded-xl transition-all flex items-center gap-2"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
             New Folder
           </button>
           <button 
             onClick={() => fileInputRef.current?.click()}
-            className="text-sm font-medium bg-white text-black hover:bg-gray-200 px-5 py-2 rounded-lg transition-colors flex items-center gap-2 shadow-lg shadow-white/10"
+            className="text-sm font-medium bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:from-violet-500 hover:to-indigo-500 px-5 py-2.5 rounded-xl transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(109,40,217,0.3)] hover:shadow-[0_0_20px_rgba(109,40,217,0.5)]"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
             Upload File
@@ -229,8 +234,8 @@ export default function Dashboard() {
             transition={{ duration: 0.4 }}
             className="flex flex-col items-center justify-center h-[60vh] text-[#686868]"
           >
-            <div className="w-24 h-24 mb-6 rounded-3xl bg-white/5 flex items-center justify-center border border-white/10 border-dashed">
-              <svg className="w-10 h-10 text-[#555]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-24 h-24 mb-6 rounded-3xl bg-violet-500/5 flex items-center justify-center border border-violet-500/20 border-dashed shadow-[inset_0_0_20px_rgba(139,92,246,0.1)]">
+              <svg className="w-10 h-10 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
             </div>
@@ -238,7 +243,7 @@ export default function Dashboard() {
             <p className="text-sm text-[#888] mb-8">Upload files or create a new folder to get started.</p>
             <button 
               onClick={() => fileInputRef.current?.click()}
-              className="text-sm font-medium bg-white/10 text-white hover:bg-white/15 px-6 py-2.5 rounded-full transition-colors flex items-center gap-2"
+              className="text-sm font-medium bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:scale-105 px-8 py-3 rounded-full transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(109,40,217,0.3)]"
             >
               Upload a file
             </button>
@@ -262,12 +267,12 @@ export default function Dashboard() {
                 }}
                 key={folderName}
                 onClick={() => navigateToFolder(folderName)}
-                className="cursor-pointer bg-[rgba(212,212,212,0.06)] backdrop-blur rounded-[24px] p-4 flex flex-col items-center justify-center gap-3 hover:bg-[rgba(212,212,212,0.1)] hover:-translate-y-1 transition-all group shadow-sm hover:shadow-xl"
+                className="cursor-pointer bg-white/[0.02] border border-white/5 backdrop-blur-xl rounded-[24px] p-5 flex flex-col items-center justify-center gap-3 hover:bg-white/[0.04] hover:border-violet-500/30 hover:-translate-y-1 transition-all group shadow-lg"
               >
-                <svg className="w-12 h-12 text-[#ededed] group-hover:scale-105 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                <svg className="w-12 h-12 text-violet-400 group-hover:scale-105 transition-transform drop-shadow-[0_0_8px_rgba(167,139,250,0.4)]" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
                 </svg>
-                <span className="text-sm font-medium text-center truncate w-full">{folderName}</span>
+                <span className="text-sm font-medium text-center truncate w-full text-violet-50 group-hover:text-white transition-colors">{folderName}</span>
               </motion.div>
             ))}
             
@@ -279,27 +284,27 @@ export default function Dashboard() {
                   visible: { opacity: 1, y: 0 }
                 }}
                 key={file.id}
-                className="bg-[rgba(212,212,212,0.06)] backdrop-blur rounded-[24px] p-4 flex flex-col items-center justify-between gap-3 hover:bg-[rgba(212,212,212,0.1)] hover:-translate-y-1 transition-all group relative shadow-sm hover:shadow-xl"
+                className="bg-white/[0.02] border border-white/5 backdrop-blur-xl rounded-[24px] p-5 flex flex-col items-center justify-between gap-3 hover:bg-white/[0.04] hover:border-white/10 hover:-translate-y-1 transition-all group relative shadow-lg"
               >
-                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 z-10">
                   <button 
                     onClick={(e) => { e.stopPropagation(); handleDownload(file); }}
-                    className="p-1.5 bg-[#161616]/80 rounded-full hover:bg-white hover:text-black transition-colors"
+                    className="p-1.5 bg-black/60 backdrop-blur rounded-full hover:bg-violet-600 hover:text-white transition-colors"
                     title="Download"
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                   </button>
                   <button 
                     onClick={(e) => { e.stopPropagation(); handleDelete(file.id); }}
-                    className="p-1.5 bg-[#161616]/80 rounded-full hover:bg-red-500 hover:text-white transition-colors"
+                    className="p-1.5 bg-black/60 backdrop-blur rounded-full hover:bg-red-500 hover:text-white transition-colors"
                     title="Delete"
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                   </button>
                 </div>
 
-                <div className="flex-1 flex items-center justify-center pt-4">
-                   <svg className="w-10 h-10 text-[#c2c2c2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex-1 flex items-center justify-center pt-2">
+                   <svg className="w-12 h-12 text-[#888] group-hover:text-indigo-400 group-hover:scale-105 transition-all drop-shadow-[0_0_8px_rgba(129,140,248,0)] group-hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.4)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                    </svg>
                 </div>

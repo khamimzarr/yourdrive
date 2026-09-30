@@ -18,19 +18,17 @@ export default function Home() {
               Privacy
             </button>
           </div>
-          <Link href="/login" className="bg-snow-white text-ink-black rounded-full-2 px-4 py-1.5 text-[14px] font-medium hover:bg-bone hover:scale-105 active:scale-95 transition-all duration-300 ml-2 shadow-lg shadow-white/10">
+          <Link href="/login" className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-full-2 px-5 py-2 text-[14px] font-medium hover:from-violet-500 hover:to-indigo-500 hover:scale-105 active:scale-95 transition-all duration-300 ml-2 shadow-[0_0_15px_rgba(109,40,217,0.4)]">
             Connect Telegram
           </Link>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative w-full min-h-screen flex items-center bg-hero-horizon overflow-hidden">
-        {/* Radial violet glow */}
-        <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full opacity-20 blur-3xl pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(107,98,242,0.4) 0%, transparent 70%)' }}
-        />
+      <section className="relative w-full min-h-screen flex items-center bg-[#050505] overflow-hidden">
+        {/* Background Glow Orbs */}
+        <div className="absolute top-[0%] left-[-10%] w-[50%] h-[50%] rounded-full bg-violet-600/15 blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[50%] rounded-full bg-indigo-600/15 blur-[120px] pointer-events-none" />
         
         <div className="max-w-[1200px] mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center relative z-10 pt-32 pb-24">
           <div className="flex flex-col gap-8">
@@ -44,11 +42,11 @@ export default function Home() {
               Unlimited, serverless cloud storage powered by your Telegram account.
             </p>
 
-            <div className="flex gap-3 items-center">
-              <Link href="/login" className="bg-snow-white text-ink-black rounded-full-2 px-6 py-3 text-[16px] font-medium hover:bg-bone hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl shadow-white/10">
+            <div className="flex gap-4 items-center">
+              <Link href="/login" className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-full-2 px-8 py-3.5 text-[16px] font-medium hover:from-violet-500 hover:to-indigo-500 hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_0_20px_rgba(109,40,217,0.4)]">
                 Get Started
               </Link>
-              <button className="rounded-full-2 px-6 py-3 text-[16px] text-snow-white/80 border border-hairline/15 hover:bg-snow-white/5 hover:scale-105 active:scale-95 transition-all duration-300">
+              <button className="rounded-full-2 px-8 py-3.5 text-[16px] font-medium text-violet-200 border border-violet-500/20 bg-violet-500/10 hover:bg-violet-500/20 hover:text-white hover:scale-105 active:scale-95 transition-all duration-300">
                 How it works
               </button>
             </div>
