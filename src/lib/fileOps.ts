@@ -74,9 +74,9 @@ export async function getAllFiles(): Promise<VFSFile[]> {
     } else if (
       'document' in msg.media &&
       msg.media.document &&
-      'size' in (msg.media.document as Record<string, unknown>)
+      'size' in (msg.media.document as unknown as Record<string, unknown>)
     ) {
-      size = Number((msg.media.document as Record<string, unknown>).size) || 0;
+      size = Number((msg.media.document as unknown as Record<string, unknown>).size) || 0;
     }
 
     newFiles.push({
