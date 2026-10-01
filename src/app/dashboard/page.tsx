@@ -145,10 +145,26 @@ export default function Dashboard() {
     }
   };
 
+  const getMimeType = (filename: string): string => {
+    const ext = filename.split('.').pop()?.toLowerCase() || '';
+    const mimeMap: Record<string, string> = {
+      jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', gif: 'image/gif',
+      webp: 'image/webp', svg: 'image/svg+xml', bmp: 'image/bmp',
+      mp4: 'video/mp4', webm: 'video/webm', mov: 'video/quicktime',
+      mp3: 'audio/mpeg', wav: 'audio/wav', ogg: 'audio/ogg', flac: 'audio/flac',
+      pdf: 'application/pdf', zip: 'application/zip', rar: 'application/x-rar-compressed',
+      doc: 'application/msword', docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      xls: 'application/vnd.ms-excel', xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      txt: 'text/plain', json: 'application/json', csv: 'text/csv',
+    };
+    return mimeMap[ext] || 'application/octet-stream';
+  };
+
   const handleDownload = async (file: VFSFile) => {
     try {
       const buffer = await downloadFile(file.id);
-      const blob = new Blob([buffer as any], { type: file.mimeType || 'application/octet-stream' });
+      const mimeType = file.mimeType || getMimeType(file.name);
+      const blob = new Blob([buffer as any], { type: mimeType });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -157,9 +173,9 @@ export default function Dashboard() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Download failed', err);
-      alert('Download failed');
+      setError(err?.message || 'Download failed');
     }
   };
   
