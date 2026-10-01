@@ -172,16 +172,16 @@ export async function uploadFile(file: File, folderPath: string): Promise<VFSFil
   }
   const client = await getClient();
   
-  // Some environments need Buffer for teleproto
-  const toUpload = typeof window !== 'undefined' ? file : Buffer.from(await file.arrayBuffer());
+  const buffer = Buffer.from(await file.arrayBuffer());
   
   const meta = { path: folderPath, name: file.name };
   const caption = `[YourDrive-Meta: ${JSON.stringify(meta)}]`;
   
   const msg = await client.sendFile('me', {
-    file: toUpload as any,
+    file: buffer,
     caption,
-    forceDocument: true
+    forceDocument: true,
+    workers: 1,
   });
   
   return {
