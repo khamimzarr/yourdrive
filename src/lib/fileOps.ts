@@ -12,7 +12,8 @@ export interface VFSFile {
   rawMeta?: any;
 }
 
-const META_REGEX = /\[YourDrive-Meta:\s*(\{.*\})\s*\]/;
+export const META_REGEX = /\[YourDrive-Meta:\s*(\{[\s\S]*?\})\s*\]/;
+export const MAX_FILE_SIZE = 104857600; // 100MB
 
 export async function getAllFiles(): Promise<VFSFile[]> {
   const client = await getClient();
@@ -28,7 +29,10 @@ export async function getAllFiles(): Promise<VFSFile[]> {
       if (match) {
         try {
           meta = JSON.parse(match[1]);
-        } catch(e) {}
+        } catch(e) {
+          console.warn('Failed to parse metadata for message', msg.id, e);
+          // Don't silently swallow, at least warn
+        }
       }
     }
     
@@ -136,6 +140,9 @@ export async function listFolders(basePath: string = '/'): Promise<string[]> {
 }
 
 export async function uploadFile(file: File, folderPath: string): Promise<VFSFile> {
+  if (file.size > MAX_FILE_SIZE) {
+    throw new Error('File size exceeds the 100MB limit');
+  }
   const client = await getClient();
   
   // Some environments need Buffer for teleproto
