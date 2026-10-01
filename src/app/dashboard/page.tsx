@@ -17,6 +17,7 @@ export default function Dashboard() {
   const [showNewFolder, setShowNewFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -30,6 +31,7 @@ export default function Dashboard() {
 
   const fetchData = async () => {
     setLoading(true);
+    setError(null);
     try {
       if (activeTab === 'files') {
         const [fetchedFiles, fetchedFolders] = await Promise.all([
@@ -45,8 +47,9 @@ export default function Dashboard() {
         setFiles(await listTrashFiles());
         setFolders([]);
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error('Error fetching data:', e);
+      setError(e.message || 'Failed to load files. Session may be expired.');
     } finally {
       setLoading(false);
     }
@@ -82,13 +85,14 @@ export default function Dashboard() {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
     setUploading(true);
+    setError(null);
     try {
       const file = e.target.files[0];
       await uploadFile(file, currentPath);
       await fetchData();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Upload failed', err);
-      alert('Upload failed');
+      setError(err.message || 'Upload failed');
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -257,6 +261,12 @@ export default function Dashboard() {
 
         {/* Main content */}
         <main className="flex-1 p-8 overflow-y-auto">
+          {error && (
+            <div className="bg-red-500 text-pure-paper p-4 rounded-md mb-6 font-bold flex justify-between items-center">
+              <span>Error: {error}</span>
+              <button onClick={() => setError(null)} className="underline text-sm">Dismiss</button>
+            </div>
+          )}
           {loading ? (
             <div className="flex justify-center items-center h-48">
               <span className="font-bold text-ash">Loading...</span>
