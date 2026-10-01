@@ -1,31 +1,28 @@
 import type { Metadata } from "next";
-import { DM_Sans, Geist } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
-
-const geist = Geist({
-  variable: "--font-geist",
-  subsets: ["latin"],
+  weight: ["400", "700"], // The design strictly enforces only 400 and 700 weights
 });
 
 export const metadata: Metadata = {
-  title: "YourDrive — Cloud Storage via Telegram",
-  description:
-    "Unlimited private cloud storage powered by Telegram Saved Messages. No server, no middleman, 100% client-side.",
+  title: "YourDrive",
+  description: "Unlimited cloud storage powered by Telegram",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html
-      lang="en"
-      className={`${dmSans.variable} ${geist.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-[#0a0a0a]">{children}</body>
+    <html lang="en" className={`${inter.variable} antialiased h-full`}>
+      <body className="min-h-full flex flex-col bg-warm-canvas text-charcoal">
+        {children}
+      </body>
     </html>
   );
 }

@@ -2,123 +2,80 @@
 
 @theme {
   /* Colors */
-  --color-void-canvas: #0a0a0a;
-  --color-graphite: #161616;
-  --color-frosted-glass: #d4d4d4;
-  --color-ink-black: #000000;
-  --color-snow-white: #ffffff;
-  --color-bone: #ededed;
-  --color-ash: #c2c2c2;
-  --color-slate: #686868;
-  --color-smoke: #b2b2b2;
-  --color-hairline: #e5e5e5;
-  --color-dusk-violet: #6b62f2;
+  --color-amber-pulse: #f9a916;
+  --color-lime-signal: #a0f32f;
+  --color-lavender-wash: #c4bae3;
+  --color-mustard-field: #e1ca46;
+  --color-sage-mist: #9fc2c7;
+  --color-khaki-paper: #e5dfc8;
+  --color-warm-canvas: #f4f1ec;
+  --color-pure-paper: #ffffff;
+  --color-pale-mist: #e2e2e7;
+  --color-hairline: #d2d1db;
+  --color-ink-stone: #27262b;
+  --color-charcoal: #000000;
+  --color-ash: #737170;
 
-  /* Typography — Families (CSS variable references) */
-  --font-display: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-body: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  /* Typography */
+  --font-inter: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
   /* Typography — Scale */
-  --text-caption: 13px;
+  --text-caption: 12px;
   --leading-caption: 1.5;
-  --tracking-caption: 0.33px;
+  --tracking-caption: -0.07px;
+  
+  --text-body-sm: 14px;
+  --leading-body-sm: 1.42;
+  --tracking-body-sm: -0.09px;
+  
   --text-body: 16px;
-  --leading-body: 1.5;
-  --tracking-body: 0px;
+  --leading-body: 1.56;
+  --tracking-body: -0.1px;
+  
   --text-subheading: 18px;
-  --leading-subheading: 1.5;
-  --tracking-subheading: 0px;
-  --text-heading-sm: 24px;
-  --leading-heading-sm: 1.33;
-  --tracking-heading-sm: 0px;
-  --text-heading: 36px;
-  --leading-heading: 1.11;
-  --tracking-heading: 0px;
-  --text-heading-lg: 48px;
-  --leading-heading-lg: 1;
-  --tracking-heading-lg: 0px;
-  --text-display: 72px;
-  --leading-display: 1;
-  --tracking-display: -2.52px;
+  --leading-subheading: 1.55;
+  --tracking-subheading: -0.2px;
+  
+  --text-heading-sm: 20px;
+  --leading-heading-sm: 1.5;
+  --tracking-heading-sm: -0.3px;
+  
+  --text-heading: 30px;
+  --leading-heading: 1.33;
+  --tracking-heading: -0.51px;
+  
+  --text-heading-lg: 40px;
+  --leading-heading-lg: 1.15;
+  --tracking-heading-lg: -0.84px;
 
   /* Spacing */
   --spacing-4: 4px;
-  --spacing-6: 6px;
   --spacing-8: 8px;
-  --spacing-10: 10px;
   --spacing-12: 12px;
-  --spacing-14: 14px;
   --spacing-16: 16px;
   --spacing-20: 20px;
-  --spacing-22: 22px;
   --spacing-24: 24px;
-  --spacing-28: 28px;
   --spacing-32: 32px;
   --spacing-40: 40px;
-  --spacing-44: 44px;
   --spacing-48: 48px;
-  --spacing-56: 56px;
+  --spacing-64: 64px;
+  --spacing-80: 80px;
+  --spacing-96: 96px;
+  --spacing-128: 128px;
 
   /* Border Radius */
   --radius-md: 4px;
-  --radius-lg: 10px;
-  --radius-2xl: 19px;
-  --radius-3xl: 24px;
-  --radius-3xl-2: 40px;
-  --radius-full: 64px;
-  --radius-full-2: 9999px;
-
-  /* Shadows */
-  --shadow-subtle: rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
-  --shadow-nav: rgba(255, 255, 255, 0.02) 0px 3px 4.5px, rgba(0, 0, 0, 0.04) 0px 10px 8px, rgba(0, 0, 0, 0.1) 0px 4px 3px;
+  --radius-full: 9999px;
 }
 
 /* Base */
 body {
-  background-color: var(--color-void-canvas);
-  color: var(--color-bone);
-  font-family: var(--font-display);
+  background-color: var(--color-warm-canvas);
+  color: var(--color-charcoal);
+  font-family: var(--font-inter);
 }
 
-/* Hero gradient — warm amber/coral → cobalt blue, subtle & atmospheric */
-.bg-hero-horizon {
-  background: linear-gradient(
-    105deg,
-    #1a0e08 0%,
-    #2d1810 15%,
-    #4a2218 30%,
-    #1a1535 60%,
-    #0d1a3a 80%,
-    #0a0a0a 100%
-  );
-}
-
-/* Dusk violet wash — single chromatic accent strip */
-.bg-dusk-violet-wash {
-  background: linear-gradient(
-    90deg,
-    rgba(0, 0, 0, 0),
-    rgba(0, 0, 0, 0) 40%,
-    rgba(107, 98, 242, 0.565) 50%,
-    rgba(0, 0, 0, 0) 60%,
-    rgba(0, 0, 0, 0)
-  );
-}
-
-/* Frosted glass surface */
-.frosted-card {
-  background: rgba(212, 212, 212, 0.06);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(229, 229, 229, 0.08);
-  border-radius: 24px;
-}
-
-/* Floating nav glass */
-.nav-glass {
-  background: rgba(22, 22, 22, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(229, 229, 229, 0.12);
+/* Stable Audio style resets */
+* {
+  box-shadow: none !important;
 }

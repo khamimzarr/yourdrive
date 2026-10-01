@@ -162,32 +162,35 @@ export default function Dashboard() {
   const breadcrumbParts = currentPath.split('/').filter(Boolean);
 
   return (
-    <div className="h-screen w-full bg-hero-horizon text-bone font-display flex overflow-hidden">
+    <div className="h-screen w-full bg-warm-canvas text-charcoal font-inter flex overflow-hidden">
       
       {/* Sidebar */}
-      <aside className="w-[240px] border-r border-hairline/10 bg-graphite/30 backdrop-blur-xl flex flex-col justify-between hidden md:flex shrink-0">
-        <div className="p-6">
-          <div className="text-snow-white font-medium text-lg mb-8 tracking-tight">YourDrive</div>
-          <nav className="flex flex-col gap-1.5">
+      <aside className="w-[280px] bg-khaki-paper border-r border-hairline flex flex-col justify-between shrink-0 h-full">
+        <div className="p-8">
+          <div className="flex items-center gap-2 mb-10">
+            <div className="w-5 h-5 rounded-full bg-lime-signal relative overflow-hidden flex-shrink-0">
+               <div className="absolute top-0 left-0 w-full h-1/2 bg-charcoal"></div>
+            </div>
+            <span className="font-bold text-[18px] tracking-tight">YourDrive</span>
+          </div>
+          
+          <nav className="flex flex-col gap-2">
             <button 
               onClick={() => setActiveTab('files')}
-              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-colors text-[14px] ${activeTab === 'files' ? 'bg-white/[0.08] text-snow-white' : 'text-ash hover:bg-white/[0.04] hover:text-snow-white'}`}
+              className={`flex items-center gap-3 px-5 py-2.5 rounded-full font-bold text-[14px] transition-colors border ${activeTab === 'files' ? 'bg-ink-stone text-pure-paper border-ink-stone' : 'bg-transparent text-charcoal border-transparent hover:border-charcoal'}`}
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
               My Files
             </button>
             <button 
               onClick={() => setActiveTab('recent')}
-              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-colors text-[14px] ${activeTab === 'recent' ? 'bg-white/[0.08] text-snow-white' : 'text-ash hover:bg-white/[0.04] hover:text-snow-white'}`}
+              className={`flex items-center gap-3 px-5 py-2.5 rounded-full font-bold text-[14px] transition-colors border ${activeTab === 'recent' ? 'bg-ink-stone text-pure-paper border-ink-stone' : 'bg-transparent text-charcoal border-transparent hover:border-charcoal'}`}
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
               Recent
             </button>
             <button 
               onClick={() => setActiveTab('trash')}
-              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-colors text-[14px] ${activeTab === 'trash' ? 'bg-white/[0.08] text-snow-white' : 'text-ash hover:bg-white/[0.04] hover:text-snow-white'}`}
+              className={`flex items-center gap-3 px-5 py-2.5 rounded-full font-bold text-[14px] transition-colors border ${activeTab === 'trash' ? 'bg-ink-stone text-pure-paper border-ink-stone' : 'bg-transparent text-charcoal border-transparent hover:border-charcoal'}`}
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
               Trash
             </button>
           </nav>
@@ -195,24 +198,24 @@ export default function Dashboard() {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col bg-transparent overflow-hidden">
+      <div className="flex-1 flex flex-col bg-warm-canvas overflow-hidden">
         {/* Top bar */}
-        <header className="sticky top-0 z-10 bg-graphite/20 backdrop-blur-md border-b border-hairline/10 px-8 py-5 flex items-center justify-between">
+        <header className="h-[80px] border-b border-hairline px-8 flex items-center justify-between bg-warm-canvas shrink-0">
           <div className="flex items-center gap-4">
             {activeTab === 'files' && (
-              <nav className="flex items-center text-[15px] font-medium gap-2">
+              <nav className="flex items-center text-[16px] font-bold gap-2 text-charcoal">
                 <button 
                   onClick={() => handleBreadcrumbClick(-1)}
-                  className="hover:text-snow-white text-ash transition-colors"
+                  className="hover:underline"
                 >
                   Root
                 </button>
                 {breadcrumbParts.map((part, idx) => (
                   <React.Fragment key={idx}>
-                    <span className="text-slate">/</span>
+                    <span className="text-ash">/</span>
                     <button
                       onClick={() => handleBreadcrumbClick(idx)}
-                      className="hover:text-snow-white text-ash transition-colors"
+                      className="hover:underline"
                     >
                       {part}
                     </button>
@@ -220,8 +223,8 @@ export default function Dashboard() {
                 ))}
               </nav>
             )}
-            {activeTab === 'recent' && <span className="text-[15px] font-medium text-snow-white">Recent Files</span>}
-            {activeTab === 'trash' && <span className="text-[15px] font-medium text-snow-white">Trash</span>}
+            {activeTab === 'recent' && <span className="text-[16px] font-bold text-charcoal">Recent Files</span>}
+            {activeTab === 'trash' && <span className="text-[16px] font-bold text-charcoal">Trash</span>}
           </div>
           
           <div className="flex items-center gap-4">
@@ -229,24 +232,25 @@ export default function Dashboard() {
               <>
                 <button 
                   onClick={() => setShowNewFolder(true)}
-                  className="px-4 py-2 rounded-full-2 border border-hairline/15 text-snow-white/85 text-[14px] hover:bg-snow-white/5 hover:scale-105 active:scale-95 transition-all duration-300"
+                  className="px-5 py-2 rounded-full border border-charcoal text-charcoal font-bold text-[14px] bg-pure-paper hover:bg-black/5 transition-colors"
                 >
                   New Folder
                 </button>
                 <button 
                   onClick={() => fileInputRef.current?.click()}
-                  className="bg-snow-white text-ink-black rounded-full-2 px-5 py-2 text-[14px] font-medium hover:bg-bone hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg shadow-white/10"
+                  className="px-6 py-2 rounded-full bg-amber-pulse text-charcoal font-bold text-[14px] flex items-center hover:opacity-90 transition-opacity"
+                  disabled={uploading}
                 >
-                  Upload
+                  {uploading ? 'Uploading...' : 'Upload'}
                 </button>
               </>
             )}
-            <div className="w-px h-5 bg-hairline/10 mx-2"></div>
+            <div className="w-px h-6 bg-hairline mx-2"></div>
             <button 
               onClick={handleLogout}
-              className="text-sm font-medium text-[#888] hover:text-[#ededed] transition-colors"
+              className="text-[14px] font-bold text-ash hover:text-charcoal transition-colors"
             >
-              Logout
+              Log out
             </button>
           </div>
         </header>
@@ -255,35 +259,26 @@ export default function Dashboard() {
         <main className="flex-1 p-8 overflow-y-auto">
           {loading ? (
             <div className="flex justify-center items-center h-48">
-              <div className="animate-pulse flex gap-2">
-                <div className="w-2 h-2 rounded-full bg-[#444]"></div>
-                <div className="w-2 h-2 rounded-full bg-[#444] animation-delay-200"></div>
-                <div className="w-2 h-2 rounded-full bg-[#444] animation-delay-400"></div>
-              </div>
+              <span className="font-bold text-ash">Loading...</span>
             </div>
           ) : folders.length === 0 && files.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-[60vh] text-slate">
-              <div className="w-16 h-16 mb-4 rounded-xl bg-white/[0.02] flex items-center justify-center border border-hairline/10 border-dashed">
-                <svg className="w-6 h-6 text-ash" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-              </div>
-              <p className="text-[15px] font-medium text-bone mb-1">No files found</p>
-              <p className="text-[13px] text-ash">This section is completely empty.</p>
+            <div className="flex flex-col items-center justify-center h-[60vh]">
+              <p className="text-[18px] font-bold text-charcoal mb-2">It's quiet in here</p>
+              <p className="text-[14px] text-ash font-normal">This section is completely empty.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
               {/* Folders */}
               {folders.map(folderName => (
                 <div 
                   key={folderName}
                   onClick={() => navigateToFolder(folderName)}
-                  className="cursor-pointer frosted-card p-5 flex items-center gap-4 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 group"
+                  className="cursor-pointer bg-pure-paper border border-hairline rounded-md p-6 flex flex-col gap-4 hover:border-charcoal transition-colors group"
                 >
-                  <svg className="w-6 h-6 text-ash group-hover:text-snow-white transition-colors flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                  </svg>
-                  <span className="text-[15px] font-medium truncate text-bone group-hover:text-snow-white transition-colors">{folderName}</span>
+                  <div className="w-10 h-10 rounded-full bg-khaki-paper flex items-center justify-center group-hover:bg-charcoal group-hover:text-pure-paper transition-colors font-bold text-[18px]">
+                    /
+                  </div>
+                  <span className="text-[16px] font-bold truncate text-charcoal">{folderName}</span>
                 </div>
               ))}
               
@@ -291,45 +286,42 @@ export default function Dashboard() {
               {files.map(file => (
                 <div 
                   key={file.id}
-                  className="frosted-card p-5 flex flex-col justify-between gap-4 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 group relative h-36"
+                  className="bg-pure-paper border border-hairline rounded-md flex flex-col group relative overflow-hidden"
                 >
-                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 z-10 bg-graphite/80 backdrop-blur-md rounded-lg border border-hairline/10 shadow-lg">
-                    {activeTab !== 'trash' && (
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); handleDownload(file); }}
-                        className="p-1.5 hover:bg-white/10 text-ash hover:text-snow-white transition-colors rounded-l-lg"
-                        title="Download"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                      </button>
-                    )}
-                    {activeTab === 'trash' && (
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); handleRestore(file); }}
-                        className="p-1.5 hover:bg-white/10 text-ash hover:text-snow-white transition-colors rounded-l-lg border-r border-hairline/10"
-                        title="Restore"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
-                      </button>
-                    )}
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); handleDelete(file); }}
-                      className="p-1.5 hover:bg-red-500/20 text-ash hover:text-red-400 transition-colors rounded-r-lg"
-                      title={activeTab === 'trash' ? 'Delete Permanently' : 'Move to Trash'}
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                    </button>
+                  <div className="aspect-[4/3] bg-pale-mist w-full relative flex items-center justify-center border-b border-hairline">
+                     {/* The lime-signal sun motif for files */}
+                     <div className="w-12 h-12 relative overflow-hidden bg-warm-canvas rounded-md">
+                        <div className="absolute bottom-0 left-0 w-full h-1/2 bg-lime-signal"></div>
+                     </div>
+                     
+                     <div className="absolute inset-0 bg-charcoal/90 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                        {activeTab !== 'trash' && (
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); handleDownload(file); }}
+                            className="px-4 py-1.5 bg-pure-paper text-charcoal rounded-full font-bold text-[12px] hover:bg-amber-pulse transition-colors"
+                          >
+                            Download
+                          </button>
+                        )}
+                        {activeTab === 'trash' && (
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); handleRestore(file); }}
+                            className="px-4 py-1.5 bg-pure-paper text-charcoal rounded-full font-bold text-[12px] hover:bg-amber-pulse transition-colors"
+                          >
+                            Restore
+                          </button>
+                        )}
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); handleDelete(file); }}
+                          className="px-4 py-1.5 border border-pure-paper text-pure-paper rounded-full font-bold text-[12px] hover:bg-red-500 hover:border-red-500 transition-colors"
+                        >
+                          {activeTab === 'trash' ? 'Delete' : 'Trash'}
+                        </button>
+                     </div>
                   </div>
-
-                  <div className="flex-1 flex items-center justify-center pt-2">
-                     <svg className="w-8 h-8 text-slate group-hover:text-ash transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                     </svg>
-                  </div>
-                  
-                  <div>
-                    <p className="text-[13px] font-medium text-bone group-hover:text-snow-white transition-colors truncate w-full" title={file.name}>{file.name}</p>
-                    <p className="text-[11px] text-slate mt-1">{formatSize(file.size)}</p>
+                  <div className="p-4 flex flex-col">
+                    <p className="text-[14px] font-bold text-charcoal truncate" title={file.name}>{file.name}</p>
+                    <p className="text-[12px] text-ash font-normal mt-1">{formatSize(file.size)}</p>
                   </div>
                 </div>
               ))}
@@ -344,30 +336,31 @@ export default function Dashboard() {
         ref={fileInputRef} 
         onChange={handleFileChange} 
       />
+      
       {/* New Folder Modal */}
       {showNewFolder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <form onSubmit={handleCreateFolder} className="bg-graphite border border-hairline/15 rounded-3xl-2 p-8 w-full max-w-sm shadow-2xl">
-            <h2 className="text-[20px] font-heading font-medium mb-6 text-snow-white">Create New Folder</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/40 p-4">
+          <form onSubmit={handleCreateFolder} className="bg-pure-paper border border-hairline rounded-md p-8 w-full max-w-sm">
+            <h2 className="text-[20px] font-bold mb-6 text-charcoal">Create folder</h2>
             <input 
               type="text" 
               autoFocus
               value={newFolderName}
               onChange={e => setNewFolderName(e.target.value)}
               placeholder="Folder name"
-              className="w-full bg-white/[0.04] border border-hairline/10 rounded-xl px-4 py-3 text-bone placeholder-[#666] focus:outline-none focus:border-white/30 transition-colors"
+              className="w-full bg-warm-canvas border border-hairline rounded-md px-4 py-3 text-charcoal font-normal focus:outline-none focus:border-charcoal transition-colors mb-6"
             />
-            <div className="flex gap-3 mt-6 justify-end">
+            <div className="flex gap-3 justify-end">
               <button 
                 type="button" 
                 onClick={() => setShowNewFolder(false)}
-                className="px-5 py-2.5 rounded-full-2 text-[14px] font-medium text-ash hover:text-snow-white hover:bg-white/5 transition-colors"
+                className="px-5 py-2.5 rounded-full border border-charcoal font-bold text-[14px] text-charcoal hover:bg-black/5 transition-colors"
               >
                 Cancel
               </button>
               <button 
                 type="submit" 
-                className="px-5 py-2.5 rounded-full-2 text-[14px] font-medium bg-snow-white text-ink-black hover:bg-bone transition-colors"
+                className="px-5 py-2.5 rounded-full font-bold text-[14px] bg-charcoal text-pure-paper hover:opacity-90 transition-opacity"
               >
                 Create
               </button>

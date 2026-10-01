@@ -31,7 +31,6 @@ export default function LoginPage() {
           {
             qrCode: async (qr) => {
               const tokenBuffer = qr.token;
-              // Base64url encode the token (using manual replace for browser compat)
               const base64Token = Buffer.from(tokenBuffer)
                 .toString('base64')
                 .replace(/\+/g, '-')
@@ -64,7 +63,6 @@ export default function LoginPage() {
           }
         );
 
-        // Login successful
         saveSession(client);
         router.push("/dashboard");
 
@@ -94,48 +92,48 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-[rgba(212,212,212,0.06)] backdrop-blur-md rounded-[24px] border border-[#e5e5e5]/10 p-8">
-        <div className="mb-6">
-          <Link href="/" className="text-[#686868] hover:text-[#ededed] text-sm flex items-center gap-2 transition-colors">
+    <div className="min-h-screen bg-warm-canvas flex flex-col items-center justify-center p-6 font-inter">
+      <div className="w-full max-w-[440px] bg-pure-paper rounded-md border border-hairline p-8 flex flex-col items-center">
+        <div className="w-full mb-8">
+          <Link href="/" className="text-charcoal font-bold text-[14px] flex items-center gap-2 hover:opacity-70 transition-opacity">
             &larr; Back
           </Link>
         </div>
         
-        <h1 className="text-2xl font-geist text-[#ededed] font-medium mb-2 text-center">Login to YourDrive</h1>
-        <p className="text-[#c2c2c2] text-center mb-8 text-sm">Scan the QR code with your Telegram app</p>
+        <h1 className="text-[30px] font-bold text-charcoal mb-2 text-center">Log in</h1>
+        <p className="text-[16px] text-ash text-center mb-8 font-normal">Scan the QR code with your Telegram app</p>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-xl mb-6 text-sm text-center">
+          <div className="w-full bg-charcoal text-pure-paper p-4 rounded-md mb-6 text-sm text-center font-bold">
             {error}
           </div>
         )}
 
-        <div className="flex flex-col items-center justify-center min-h-[300px]">
+        <div className="flex flex-col items-center justify-center min-h-[300px] w-full">
           {loading && !qrImageUrl && !passwordRequired ? (
-            <div className="text-[#c2c2c2] text-sm animate-pulse">Connecting to Telegram...</div>
+            <div className="text-ash font-bold animate-pulse">Connecting...</div>
           ) : passwordRequired ? (
-            <form onSubmit={handlePasswordSubmit} className="w-full flex flex-col gap-4">
-              <div>
-                <label className="block text-[#c2c2c2] text-sm mb-2">Two-Step Verification Password</label>
+            <form onSubmit={handlePasswordSubmit} className="w-full flex flex-col gap-6">
+              <div className="flex flex-col gap-2">
+                <label className="text-charcoal font-bold text-[14px]">Two-Step Verification Password</label>
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-[#161616] border border-[#e5e5e5]/10 rounded-xl px-4 py-3 text-[#ededed] focus:outline-none focus:border-[#6b62f2]/50 transition-colors"
+                  className="w-full bg-pure-paper border border-hairline rounded-md px-4 py-3 text-charcoal focus:outline-none focus:border-charcoal transition-colors font-normal"
                   placeholder="Enter your password"
                   autoFocus
                 />
               </div>
               <button
                 type="submit"
-                className="w-full bg-white text-black rounded-full px-6 py-3 font-medium hover:bg-white/90 transition-colors mt-2"
+                className="w-full bg-amber-pulse text-charcoal rounded-full px-6 py-3 font-bold text-[16px] hover:opacity-90 transition-opacity"
               >
                 Submit Password
               </button>
             </form>
           ) : qrImageUrl ? (
-            <div className="bg-white p-2 rounded-2xl">
+            <div className="border border-hairline rounded-md overflow-hidden bg-white p-2">
               <img src={qrImageUrl} alt="Telegram Login QR Code" className="w-[280px] h-[280px]" />
             </div>
           ) : null}
