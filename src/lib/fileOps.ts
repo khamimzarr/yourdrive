@@ -1,5 +1,6 @@
 import { getClient } from './telegram';
 import { Api } from 'teleproto';
+import { saveFiles, getAllCachedFiles } from './db';
 
 export interface VFSFile {
   id: number;
@@ -16,63 +17,89 @@ export const META_REGEX = /\[YourDrive-Meta:\s*(\{[\s\S]*?\})\s*\]/;
 export const MAX_FILE_SIZE = 104857600; // 100MB
 
 export async function getAllFiles(): Promise<VFSFile[]> {
+  let cachedFiles: VFSFile[] = [];
+  try {
+    cachedFiles = await getAllCachedFiles();
+  } catch (e) {
+    console.warn('IndexedDB not available, falling back to full fetch', e);
+  }
+
+  const highestId = cachedFiles.length > 0 ? cachedFiles.reduce((max, f) => (f.id > max ? f.id : max), 0) : 0;
+
   const client = await getClient();
-  const messages = await client.getMessages('me', { limit: 100 });
-  const allFiles: VFSFile[] = [];
-  
+  // Fetch messages newer than highestId
+  const messages = await client.getMessages('me', { minId: highestId, limit: 1000 });
+  const newFiles: VFSFile[] = [];
+
   for (const msg of messages) {
     if (!msg.media) continue;
-    
+
     let meta: any = null;
     if (msg.message) {
       const match = msg.message.match(META_REGEX);
       if (match) {
         try {
           meta = JSON.parse(match[1]);
-        } catch(e) {
+        } catch (e) {
           console.warn('Failed to parse metadata for message', msg.id, e);
-          // Don't silently swallow, at least warn
         }
       }
     }
-    
+
     let path = '/';
     let name = 'Unknown File';
     let isTrash = false;
-    
+
     if (meta) {
-       path = meta.path || '/';
-       name = meta.name || name;
-       isTrash = !!meta.trash;
+      path = meta.path || '/';
+      name = meta.name || name;
+      isTrash = !!meta.trash;
     } else {
-       if (msg.media instanceof Api.MessageMediaDocument && msg.media.document instanceof Api.Document) {
-          for (const attr of msg.media.document.attributes) {
-             if (attr instanceof Api.DocumentAttributeFilename) {
-                name = attr.fileName;
-             }
+      if (msg.media instanceof Api.MessageMediaDocument && msg.media.document instanceof Api.Document) {
+        for (const attr of msg.media.document.attributes) {
+          if (attr instanceof Api.DocumentAttributeFilename) {
+            name = attr.fileName;
           }
-       } else if (msg.media instanceof Api.MessageMediaPhoto) {
-          name = `Photo_${msg.id}.jpg`;
-       }
+        }
+      } else if (msg.media instanceof Api.MessageMediaPhoto) {
+        name = `Photo_${msg.id}.jpg`;
+      } else if ('document' in msg.media && msg.media.document) {
+        name = 'Document';
+      }
     }
-    
+
     let size = 0;
     if (msg.media instanceof Api.MessageMediaDocument && msg.media.document instanceof Api.Document) {
-       size = Number(msg.media.document.size) || 0;
+      size = Number(msg.media.document.size) || 0;
+    } else if (
+      'document' in msg.media &&
+      msg.media.document &&
+      'size' in (msg.media.document as Record<string, unknown>)
+    ) {
+      size = Number((msg.media.document as Record<string, unknown>).size) || 0;
     }
-    
-    allFiles.push({
+
+    newFiles.push({
       id: msg.id,
       name,
       path,
       size,
       date: msg.date,
       isTrash,
-      rawMeta: meta
+      rawMeta: meta,
     });
   }
-  
-  return allFiles;
+
+  if (newFiles.length > 0) {
+    try {
+      await saveFiles(newFiles);
+    } catch (e) {
+      console.error('Failed to save to cache', e);
+    }
+  }
+
+  const newIds = new Set(newFiles.map(f => f.id));
+  return [...newFiles, ...cachedFiles.filter(f => !newIds.has(f.id))].sort((a, b) => b.id - a.id);
 }
 
 export async function listFiles(folderPath: string): Promise<VFSFile[]> {

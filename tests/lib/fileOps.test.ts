@@ -1,7 +1,9 @@
 import { uploadFile, getAllFiles, META_REGEX, MAX_FILE_SIZE } from '../../src/lib/fileOps';
 import { getClient } from '../../src/lib/telegram';
+import { saveFiles, getAllCachedFiles } from '../../src/lib/db';
 
 jest.mock('../../src/lib/telegram');
+jest.mock('../../src/lib/db');
 
 describe('File Operations', () => {
   const mockSendFile = jest.fn();
@@ -13,6 +15,8 @@ describe('File Operations', () => {
       sendFile: mockSendFile,
       getMessages: mockGetMessages,
     });
+    (getAllCachedFiles as jest.Mock).mockResolvedValue([]);
+    (saveFiles as jest.Mock).mockResolvedValue(undefined);
   });
 
   describe('Upload limits', () => {
@@ -139,6 +143,137 @@ describe('File Operations', () => {
       );
 
       warnSpy.mockRestore();
+    });
+  });
+
+  describe('getAllFiles sync with IndexedDB', () => {
+    it('should fetch with minId: 0 when cache empty and save new files to IndexedDB', async () => {
+      (getAllCachedFiles as jest.Mock).mockResolvedValueOnce([]);
+      mockGetMessages.mockResolvedValueOnce([
+        {
+          id: 10,
+          media: { _: 'messageMediaDocument' },
+          message: '[YourDrive-Meta: {"path": "/Docs", "name": "doc1.txt"}]',
+          date: 1000,
+        },
+      ]);
+
+      const files = await getAllFiles();
+
+      expect(mockGetMessages).toHaveBeenCalledWith('me', { minId: 0, limit: 1000 });
+      expect(saveFiles).toHaveBeenCalledWith([
+        expect.objectContaining({ id: 10, name: 'doc1.txt', path: '/Docs' }),
+      ]);
+      expect(files).toHaveLength(1);
+      expect(files[0].id).toBe(10);
+    });
+
+    it('should fetch with minId: highestId and merge new files with cached files sorted by id desc', async () => {
+      const cached = [
+        { id: 20, name: 'cached20.txt', path: '/', size: 100, date: 500, isTrash: false },
+        { id: 50, name: 'cached50.txt', path: '/', size: 200, date: 600, isTrash: false },
+      ];
+      (getAllCachedFiles as jest.Mock).mockResolvedValueOnce(cached);
+      mockGetMessages.mockResolvedValueOnce([
+        {
+          id: 60,
+          media: { _: 'messageMediaDocument' },
+          message: '[YourDrive-Meta: {"path": "/", "name": "new60.txt"}]',
+          date: 700,
+        },
+      ]);
+
+      const files = await getAllFiles();
+
+      expect(mockGetMessages).toHaveBeenCalledWith('me', { minId: 50, limit: 1000 });
+      expect(saveFiles).toHaveBeenCalledWith([
+        expect.objectContaining({ id: 60, name: 'new60.txt' }),
+      ]);
+      expect(files.map((f) => f.id)).toEqual([60, 50, 20]);
+    });
+
+    it('should not call saveFiles if no new messages are found', async () => {
+      const cached = [
+        { id: 10, name: 'file.txt', path: '/', size: 50, date: 100, isTrash: false },
+      ];
+      (getAllCachedFiles as jest.Mock).mockResolvedValueOnce(cached);
+      mockGetMessages.mockResolvedValueOnce([]);
+
+      const files = await getAllFiles();
+
+      expect(mockGetMessages).toHaveBeenCalledWith('me', { minId: 10, limit: 1000 });
+      expect(saveFiles).not.toHaveBeenCalled();
+      expect(files).toEqual(cached);
+    });
+
+    it('should gracefully handle IndexedDB read error and continue fetch', async () => {
+      const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      (getAllCachedFiles as jest.Mock).mockRejectedValueOnce(new Error('IDB read failure'));
+      mockGetMessages.mockResolvedValueOnce([
+        {
+          id: 5,
+          media: { _: 'messageMediaDocument' },
+          message: '[YourDrive-Meta: {"name": "resilient.txt", "path": "/"}]',
+          date: 200,
+        },
+      ]);
+
+      const files = await getAllFiles();
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        'IndexedDB not available, falling back to full fetch',
+        expect.any(Error)
+      );
+      expect(mockGetMessages).toHaveBeenCalledWith('me', { minId: 0, limit: 1000 });
+      expect(files).toHaveLength(1);
+      expect(files[0].id).toBe(5);
+
+      warnSpy.mockRestore();
+    });
+
+    it('should catch and log error if saveFiles rejects without failing getAllFiles', async () => {
+      const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      (getAllCachedFiles as jest.Mock).mockResolvedValueOnce([]);
+      (saveFiles as jest.Mock).mockRejectedValueOnce(new Error('IDB write failure'));
+      mockGetMessages.mockResolvedValueOnce([
+        {
+          id: 15,
+          media: { _: 'messageMediaDocument' },
+          message: '[YourDrive-Meta: {"name": "write-fail.txt", "path": "/"}]',
+          date: 300,
+        },
+      ]);
+
+      const files = await getAllFiles();
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Failed to save to cache',
+        expect.any(Error)
+      );
+      expect(files).toHaveLength(1);
+      expect(files[0].id).toBe(15);
+
+      errorSpy.mockRestore();
+    });
+
+    it('should deduplicate and replace cached file when new file has the same id', async () => {
+      const cached = [
+        { id: 10, name: 'old-name.txt', path: '/', size: 100, date: 500, isTrash: false },
+      ];
+      (getAllCachedFiles as jest.Mock).mockResolvedValueOnce(cached);
+      mockGetMessages.mockResolvedValueOnce([
+        {
+          id: 10,
+          media: { _: 'messageMediaDocument' },
+          message: '[YourDrive-Meta: {"name": "updated-name.txt", "path": "/"}]',
+          date: 600,
+        },
+      ]);
+
+      const files = await getAllFiles();
+
+      expect(files).toHaveLength(1);
+      expect(files[0].name).toBe('updated-name.txt');
     });
   });
 });
